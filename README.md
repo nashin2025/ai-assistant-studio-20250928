@@ -56,7 +56,7 @@ Before installing, ensure you have the following:
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/nashin2025/ai-assistant-studio.git
+git clone [https://github.com/nashin2025/ai-assistant-studio.git](https://github.com/nashin2025/ai-assistant-studio-20250928.git)
 cd ai-assistant-studio
 ```
 
