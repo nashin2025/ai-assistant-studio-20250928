@@ -643,7 +643,7 @@ async def delete_user(user_id: int, db: Session = Depends(get_db)):
           uvicorn: "0.24.0",
           sqlalchemy: "2.0.23"
         },
-        instructions: "1. Create a virtual environment: python -m venv venv\n2. Activate it:\n   - Windows: venv\\Scripts\\activate.bat\n   - Unix/Mac: source venv/bin/activate\n3. Install dependencies: pip install -r requirements.txt\n4. Create .env file with DATABASE_URL\n5. Run the server: python main.py\n6. Visit http://localhost:8000/docs for interactive API documentation",
+        instructions: "1. Create a virtual environment: python -m venv venv\n2. Activate it: source venv/bin/activate (Unix) or venv\\Scripts\\activate (Windows)\n3. Install dependencies: pip install -r requirements.txt\n4. Create .env file with DATABASE_URL\n5. Run the server: python main.py\n6. Visit http://localhost:8000/docs for interactive API documentation",
         difficulty: "intermediate",
         estimatedTime: "2-3 hours",
         tags: ["python", "fastapi", "api", "backend", "sqlalchemy"],
