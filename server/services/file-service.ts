@@ -19,7 +19,7 @@ export interface FileAnalysis {
 }
 
 export class FileService {
-  private uploadDir = process.env.UPLOAD_DIR || './uploads';
+  private uploadDir = process.env.UPLOAD_DIR || path.resolve(process.cwd(), 'uploads');
 
   constructor() {
     this.ensureUploadDir();
@@ -40,7 +40,8 @@ export class FileService {
     mimeType: string
   ): Promise<File> {
     const filename = `${Date.now()}-${Math.random().toString(36).substring(2)}-${originalName}`;
-    const filePath = path.join(this.uploadDir, filename);
+    const filePath = path.resolve(this.uploadDir, filename);
+    console.log('File upload path:', filePath);
 
     try {
       await fs.writeFile(filePath, content);
@@ -52,7 +53,7 @@ export class FileService {
         mimeType,
         size: content.length,
         path: filePath,
-        analysis: await this.analyzeFile(content, originalName, mimeType),
+        analysis: JSON.stringify(await this.analyzeFile(content, originalName, mimeType)),
       };
 
       return await storage.createFile(insertFile);
