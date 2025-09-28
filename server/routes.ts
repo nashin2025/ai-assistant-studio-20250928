@@ -176,8 +176,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const message = await storage.createMessage(data);
       
-      // Update conversation timestamp
-      await storage.updateConversation(data.conversationId!, { updatedAt: new Date() });
+      // Update conversation timestamp (only if conversationId exists)
+      if (data.conversationId) {
+        await storage.updateConversation(data.conversationId, { updatedAt: Date.now() });
+      }
       
       res.json(message);
     } catch (error) {
@@ -736,6 +738,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Verify project ownership through version's project
+      if (!version.projectId) {
+        return res.status(400).json({ error: "Invalid project version data" });
+      }
       const project = await storage.getProject(version.projectId);
       if (!project || project.userId !== userId) {
         return res.status(403).json({ error: "Access denied" });
@@ -760,6 +765,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Project plan version not found" });
       }
       
+      if (!existingVersion.projectId) {
+        return res.status(400).json({ error: "Invalid project version data" });
+      }
       const project = await storage.getProject(existingVersion.projectId);
       if (!project || project.userId !== userId) {
         return res.status(403).json({ error: "Access denied" });
@@ -788,6 +796,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Project plan version not found" });
       }
       
+      if (!version.projectId) {
+        return res.status(400).json({ error: "Invalid project version data" });
+      }
       const project = await storage.getProject(version.projectId);
       if (!project || project.userId !== userId) {
         return res.status(403).json({ error: "Access denied" });
@@ -812,7 +823,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(repositories);
     } catch (error) {
       console.error("Error fetching GitHub repositories:", error);
-      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to fetch repositories" });
+      // Return empty array instead of error for better UX when GitHub isn't configured
+      res.json([]);
     }
   });
 
