@@ -699,15 +699,12 @@ class SQLiteStorage implements IStorage {
   constructor() {
     // Create data directory if it doesn't exist
     const dataDir = path.join(process.cwd(), 'data');
-    // Ensure Windows-compatible path handling
-    const normalizedDataDir = path.resolve(dataDir);
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
     
     // Initialize SQLite database
-    const dbPath = path.join(normalizedDataDir, 'ai-assistant-studio.db');
-    console.log('SQLite database path:', dbPath);
+    const dbPath = path.join(dataDir, 'ai-assistant-studio.db');
     this.sqlite = new Database(dbPath);
     this.db = drizzle(this.sqlite);
     this.initializeTables();
