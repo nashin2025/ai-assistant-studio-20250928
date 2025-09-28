@@ -39,6 +39,12 @@ export interface CodeAnalysis {
 export class GitHubService {
   async getUserRepositories(): Promise<GitHubRepository[]> {
     try {
+      // Check if GitHub token is available
+      if (!process.env.GITHUB_PERSONAL_ACCESS_TOKEN) {
+        console.log("GitHub integration not configured - GITHUB_PERSONAL_ACCESS_TOKEN missing");
+        return []; // Return empty array for local development
+      }
+
       const octokit = await getUncachableGitHubClient();
       const response = await octokit.rest.repos.listForAuthenticatedUser({
         sort: 'updated',
@@ -59,7 +65,8 @@ export class GitHubService {
       }));
     } catch (error) {
       console.error("Error fetching GitHub repositories:", error);
-      throw new Error("Failed to fetch repositories from GitHub");
+      // Return empty array instead of throwing for better UX
+      return [];
     }
   }
 
