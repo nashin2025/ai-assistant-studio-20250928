@@ -70,12 +70,12 @@ export class ProjectGeneratorService {
       name: projectName || template.name,
       description: description || template.description,
       status: 'active',
-      metadata: {
+      metadata: JSON.stringify({
         templateId: template.id,
         techStack: template.techStack,
         generatedAt: new Date().toISOString(),
         templateName: template.name
-      }
+      })
     });
 
     // Generate files on disk
@@ -102,13 +102,26 @@ export class ProjectGeneratorService {
     // Ensure project directory exists
     await fs.mkdir(projectPath, { recursive: true });
 
-    const files = template.files as Array<{
-      path: string;
-      content: string;
-      type: string;
-    }>;
+    // Parse files from template (handle both string and array formats)
+    let files: Array<{ path: string; content: string; type: string; }>;
+    if (typeof template.files === 'string') {
+      try {
+        files = JSON.parse(template.files);
+      } catch (error) {
+        console.error('Failed to parse template files:', error);
+        files = [];
+      }
+    } else {
+      files = template.files as Array<{ path: string; content: string; type: string; }>;
+    }
 
     for (const file of files) {
+      // Skip files with invalid paths
+      if (!file.path || typeof file.path !== 'string') {
+        console.warn('Skipping file with invalid path:', file);
+        continue;
+      }
+      
       // Sanitize file path to prevent directory traversal attacks
       const filePath = sanitizeFilePath(file.path, projectPath);
       const fileDir = path.dirname(filePath);
@@ -158,6 +171,19 @@ export class ProjectGeneratorService {
   }
 
   private generateReadme(template: ProjectTemplate, projectName: string): string {
+    // Safely parse template files for file tree generation
+    let files: Array<{ path: string; type: string; }> = [];
+    try {
+      if (typeof template.files === 'string') {
+        files = JSON.parse(template.files);
+      } else {
+        files = template.files as Array<{ path: string; type: string; }>;
+      }
+    } catch (error) {
+      console.warn('Failed to parse template files for README generation:', error);
+      files = [];
+    }
+
     return `# ${projectName}
 
 ${template.description}
@@ -183,7 +209,7 @@ ${template.dependencies ? '```json\n' + JSON.stringify(template.dependencies, nu
 
 This project was generated with the following file structure:
 
-${this.generateFileTree(template.files as Array<{path: string, type: string}>)}
+${this.generateFileTree(files)}
 
 ---
 
