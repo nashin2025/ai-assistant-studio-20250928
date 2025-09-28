@@ -1125,7 +1125,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Read the current README.md file
       let readmeContent: string;
       try {
-        readmeContent = await fs.readFile('./README.md', 'utf-8');
+        readmeContent = await fs.readFile(path.resolve(process.cwd(), 'README.md'), 'utf-8');
       } catch (error: any) {
         if (error.code === 'ENOENT') {
           return res.status(404).json({
