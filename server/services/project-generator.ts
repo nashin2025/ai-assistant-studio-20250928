@@ -7,7 +7,7 @@ import type { ProjectTemplate, Project } from '@shared/schema';
 // Security utility to validate and sanitize file paths
 function sanitizeFilePath(filePath: string, projectPath: string): string {
   // Normalize the file path to prevent directory traversal
-  const normalized = path.normalize(filePath);
+  const normalized = path.normalize(filePath.replace(/\\/g, '/'));
   
   // Reject absolute paths
   if (path.isAbsolute(normalized)) {
@@ -39,7 +39,7 @@ interface GeneratedProject {
 }
 
 export class ProjectGeneratorService {
-  private readonly baseOutputPath = path.join(process.cwd(), 'generated-projects');
+  private readonly baseOutputPath = path.resolve(process.cwd(), 'generated-projects');
 
   constructor() {
     this.ensureOutputDirectory();
@@ -100,7 +100,7 @@ export class ProjectGeneratorService {
     projectName: string
   ): Promise<void> {
     // Ensure project directory exists
-    await fs.mkdir(projectPath, { recursive: true });
+    await fs.mkdir(path.resolve(projectPath), { recursive: true });
 
     const files = template.files as Array<{
       path: string;
