@@ -87,9 +87,9 @@ BING_API_KEY=your-bing-api-key
 # Note: DuckDuckGo search works without an API key
 ```
 ### 3.1 get session_secret
-
+```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-
+```
 #### 4. Start the Application
 
 ```bash
