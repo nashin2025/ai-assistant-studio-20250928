@@ -56,8 +56,8 @@ Before installing, ensure you have the following:
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/nashin2025/ai-assistant-studio-20250928.git
-cd ai-assistant-studio-20250928
+git clone https://github.com/yourusername/ai-assistant-studio.git
+cd ai-assistant-studio
 ```
 
 #### 2. Install Dependencies
@@ -86,10 +86,7 @@ GOOGLE_CX=your-google-search-engine-id
 BING_API_KEY=your-bing-api-key
 # Note: DuckDuckGo search works without an API key
 ```
-### 3.1 get session_secret
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
+
 #### 4. Start the Application
 
 ```bash
