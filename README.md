@@ -58,6 +58,7 @@ Before installing, ensure you have the following:
 ```bash
 git clone https://github.com/yourusername/ai-assistant-studio.git
 cd ai-assistant-studio
+copy package.windows.json package.json
 ```
 
 #### 2. Install Dependencies
