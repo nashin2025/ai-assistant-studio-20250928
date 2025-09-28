@@ -57,7 +57,7 @@ Before installing, ensure you have the following:
 
 ```bash
 git clone https://github.com/nashin2025/ai-assistant-studio-20250928.git
-cd ai-assistant-studio
+cd ai-assistant-studio-20250928
 ```
 
 #### 2. Install Dependencies
