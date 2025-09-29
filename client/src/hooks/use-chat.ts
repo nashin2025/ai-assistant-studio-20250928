@@ -22,6 +22,24 @@ export function useChat(conversationId?: string) {
   const queryClient = useQueryClient();
   const { processAIResponse, hasAutoSaveableContent } = useAutoFileManager();
 
+  // Helper function to combine auto file results from user and AI messages
+  const combineAutoFileResults = (userResult: any, aiResult: any) => {
+    if (!userResult && !aiResult) return null;
+    
+    const combined = {
+      created: [...(userResult?.created || []), ...(aiResult?.created || [])],
+      updated: [...(userResult?.updated || []), ...(aiResult?.updated || [])],
+      errors: [...(userResult?.errors || []), ...(aiResult?.errors || [])],
+    };
+    
+    // Return null if nothing was processed
+    if (combined.created.length === 0 && combined.updated.length === 0 && combined.errors.length === 0) {
+      return null;
+    }
+    
+    return combined;
+  };
+
   // Wrapper function to save to localStorage when conversation ID changes
   const setCurrentConversationId = (id: string | undefined) => {
     setCurrentConversationIdState(id);
@@ -168,6 +186,17 @@ export function useChat(conversationId?: string) {
         });
       }
 
+      // Process user message for automatic file creation first (regardless of LLM availability)
+      let userAutoFileResult = null;
+      try {
+        if (hasAutoSaveableContent(content)) {
+          userAutoFileResult = await processAIResponse(content);
+        }
+      } catch (error) {
+        console.warn('User auto file processing failed:', error);
+        // Continue even if auto file processing fails
+      }
+
       // Send to LLM with error handling
       try {
         const llmResponse = await apiRequest("POST", "/api/llm/chat", {
@@ -178,15 +207,18 @@ export function useChat(conversationId?: string) {
         const llmResult = await llmResponse.json();
 
         // Process AI response for automatic file creation/editing
-        let autoFileResult = null;
+        let aiAutoFileResult = null;
         try {
           if (hasAutoSaveableContent(llmResult.content)) {
-            autoFileResult = await processAIResponse(llmResult.content);
+            aiAutoFileResult = await processAIResponse(llmResult.content);
           }
         } catch (error) {
-          console.warn('Auto file processing failed:', error);
+          console.warn('AI auto file processing failed:', error);
           // Continue even if auto file processing fails
         }
+
+        // Combine auto file results from both user and AI messages
+        const combinedAutoFileResult = combineAutoFileResults(userAutoFileResult, aiAutoFileResult);
 
         // Create assistant message
         const assistantMessage: InsertMessage = {
@@ -196,10 +228,10 @@ export function useChat(conversationId?: string) {
           metadata: JSON.stringify({
             usage: llmResult.usage,
             fileAnalysis: fileAnalysis ? fileAnalysis.analysis : undefined,
-            autoFiles: autoFileResult ? {
-              created: autoFileResult.created,
-              updated: autoFileResult.updated,
-              errors: autoFileResult.errors,
+            autoFiles: combinedAutoFileResult ? {
+              created: combinedAutoFileResult.created,
+              updated: combinedAutoFileResult.updated,
+              errors: combinedAutoFileResult.errors,
             } : undefined,
           }),
         };
@@ -217,6 +249,11 @@ export function useChat(conversationId?: string) {
           metadata: JSON.stringify({
             error: "LLM service unavailable",
             fileAnalysis: fileAnalysis ? fileAnalysis.analysis : undefined,
+            autoFiles: userAutoFileResult ? {
+              created: userAutoFileResult.created,
+              updated: userAutoFileResult.updated,
+              errors: userAutoFileResult.errors,
+            } : undefined,
           }),
         };
 

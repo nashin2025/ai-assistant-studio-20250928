@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { sqliteTable, text, integer, real, blob, index } from "drizzle-orm/sqlite-core";
+import { pgTable, text, integer, real, bytea, index, varchar, timestamp, boolean, bigint } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -17,18 +17,18 @@ function generateUUID(): string {
 }
 
 // Session storage table
-export const sessions = sqliteTable(
+export const sessions = pgTable(
   "sessions",
   {
     sid: text("sid").primaryKey(),
-    sess: text("sess").notNull(), // JSON as text in SQLite
-    expire: integer("expire").notNull(), // Unix timestamp
+    sess: text("sess").notNull(), // JSON as text
+    expire: bigint("expire", { mode: 'number' }).notNull(), // Unix timestamp
   },
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
 // Users table for local authentication
-export const users = sqliteTable("users", {
+export const users = pgTable("users", {
   id: text("id").primaryKey().$defaultFn(() => generateUUID()),
   email: text("email").unique(),
   firstName: text("first_name"),
@@ -38,28 +38,28 @@ export const users = sqliteTable("users", {
   // Legacy fields for backward compatibility
   username: text("username").unique(), // Keep for existing data
   password: text("password"), // Keep for existing data
-  createdAt: integer("created_at").$defaultFn(() => Date.now()),
-  updatedAt: integer("updated_at").$defaultFn(() => Date.now()),
+  createdAt: bigint("created_at", { mode: 'number' }).$defaultFn(() => Date.now()),
+  updatedAt: bigint("updated_at", { mode: 'number' }).$defaultFn(() => Date.now()),
 });
 
-export const conversations = sqliteTable("conversations", {
+export const conversations = pgTable("conversations", {
   id: text("id").primaryKey().$defaultFn(() => generateUUID()),
   userId: text("user_id").references(() => users.id),
   title: text("title").notNull(),
-  createdAt: integer("created_at").$defaultFn(() => Date.now()),
-  updatedAt: integer("updated_at").$defaultFn(() => Date.now()),
+  createdAt: bigint("created_at", { mode: 'number' }).$defaultFn(() => Date.now()),
+  updatedAt: bigint("updated_at", { mode: 'number' }).$defaultFn(() => Date.now()),
 });
 
-export const messages = sqliteTable("messages", {
+export const messages = pgTable("messages", {
   id: text("id").primaryKey().$defaultFn(() => generateUUID()),
   conversationId: text("conversation_id").references(() => conversations.id),
   role: text("role").notNull(), // 'user' | 'assistant' | 'system'
   content: text("content").notNull(),
   metadata: text("metadata"), // JSON as text in SQLite
-  createdAt: integer("created_at").$defaultFn(() => Date.now()),
+  createdAt: bigint("created_at", { mode: 'number' }).$defaultFn(() => Date.now()),
 });
 
-export const projects = sqliteTable("projects", {
+export const projects = pgTable("projects", {
   id: text("id").primaryKey().$defaultFn(() => generateUUID()),
   userId: text("user_id").references(() => users.id),
   name: text("name").notNull(),
@@ -67,23 +67,24 @@ export const projects = sqliteTable("projects", {
   githubUrl: text("github_url"),
   status: text("status").default("active"), // 'active' | 'archived' | 'completed'
   metadata: text("metadata"), // JSON as text in SQLite
-  createdAt: integer("created_at").$defaultFn(() => Date.now()),
-  updatedAt: integer("updated_at").$defaultFn(() => Date.now()),
+  createdAt: bigint("created_at", { mode: 'number' }).$defaultFn(() => Date.now()),
+  updatedAt: bigint("updated_at", { mode: 'number' }).$defaultFn(() => Date.now()),
 });
 
-export const files = sqliteTable("files", {
+export const files = pgTable("files", {
   id: text("id").primaryKey().$defaultFn(() => generateUUID()),
   userId: text("user_id").references(() => users.id),
+  projectId: text("project_id").references(() => projects.id),
   filename: text("filename").notNull(),
   originalName: text("original_name").notNull(),
   mimeType: text("mime_type").notNull(),
   size: integer("size").notNull(),
   path: text("path").notNull(),
   analysis: text("analysis"), // JSON as text in SQLite
-  createdAt: integer("created_at").$defaultFn(() => Date.now()),
+  createdAt: bigint("created_at", { mode: 'number' }).$defaultFn(() => Date.now()),
 });
 
-export const llmConfigurations = sqliteTable("llm_configurations", {
+export const llmConfigurations = pgTable("llm_configurations", {
   id: text("id").primaryKey().$defaultFn(() => generateUUID()),
   userId: text("user_id").references(() => users.id),
   name: text("name").notNull(),
@@ -91,36 +92,36 @@ export const llmConfigurations = sqliteTable("llm_configurations", {
   model: text("model").notNull(),
   temperature: integer("temperature").default(70), // 0-100 range
   maxTokens: integer("max_tokens").default(2048),
-  isDefault: integer("is_default", { mode: 'boolean' }).default(false),
-  createdAt: integer("created_at").$defaultFn(() => Date.now()),
+  isDefault: boolean("is_default").default(false),
+  createdAt: bigint("created_at", { mode: 'number' }).$defaultFn(() => Date.now()),
 });
 
-export const searchEngines = sqliteTable("search_engines", {
+export const searchEngines = pgTable("search_engines", {
   id: text("id").primaryKey().$defaultFn(() => generateUUID()),
   userId: text("user_id").references(() => users.id),
   name: text("name").notNull(),
-  enabled: integer("enabled", { mode: 'boolean' }).default(true),
+  enabled: boolean("enabled").default(true),
   apiKey: text("api_key"),
-  createdAt: integer("created_at").$defaultFn(() => Date.now()),
+  createdAt: bigint("created_at", { mode: 'number' }).$defaultFn(() => Date.now()),
 });
 
-export const userPreferences = sqliteTable("user_preferences", {
+export const userPreferences = pgTable("user_preferences", {
   id: text("id").primaryKey().$defaultFn(() => generateUUID()),
   userId: text("user_id").references(() => users.id),
   theme: text("theme").default("dark"), // "light" | "dark" | "system"
-  compactMode: integer("compact_mode", { mode: 'boolean' }).default(false),
-  animations: integer("animations", { mode: 'boolean' }).default(true),
+  compactMode: boolean("compact_mode").default(false),
+  animations: boolean("animations").default(true),
   fontSize: text("font_size").default("medium"), // "small" | "medium" | "large"
   codeFont: text("code_font").default("jetbrains"), // "jetbrains" | "fira" | "source" | "consolas"
   maxConcurrentRequests: integer("max_concurrent_requests").default(5),
   cacheDuration: integer("cache_duration").default(30), // minutes
-  autoSaveConversations: integer("auto_save_conversations", { mode: 'boolean' }).default(true),
-  analyticsCollection: integer("analytics_collection", { mode: 'boolean' }).default(false),
-  createdAt: integer("created_at").$defaultFn(() => Date.now()),
-  updatedAt: integer("updated_at").$defaultFn(() => Date.now()),
+  autoSaveConversations: boolean("auto_save_conversations").default(true),
+  analyticsCollection: boolean("analytics_collection").default(false),
+  createdAt: bigint("created_at", { mode: 'number' }).$defaultFn(() => Date.now()),
+  updatedAt: bigint("updated_at", { mode: 'number' }).$defaultFn(() => Date.now()),
 });
 
-export const projectTemplates = sqliteTable("project_templates", {
+export const projectTemplates = pgTable("project_templates", {
   id: text("id").primaryKey().$defaultFn(() => generateUUID()),
   name: text("name").notNull(),
   description: text("description").notNull(),
@@ -132,12 +133,12 @@ export const projectTemplates = sqliteTable("project_templates", {
   difficulty: text("difficulty").default("beginner"), // "beginner" | "intermediate" | "advanced"
   estimatedTime: text("estimated_time"), // "1-2 hours", "1 day", etc.
   tags: text("tags"), // JSON as text in SQLite
-  isPublic: integer("is_public", { mode: 'boolean' }).default(true),
-  createdAt: integer("created_at").$defaultFn(() => Date.now()),
-  updatedAt: integer("updated_at").$defaultFn(() => Date.now()),
+  isPublic: boolean("is_public").default(true),
+  createdAt: bigint("created_at", { mode: 'number' }).$defaultFn(() => Date.now()),
+  updatedAt: bigint("updated_at", { mode: 'number' }).$defaultFn(() => Date.now()),
 });
 
-export const projectPlanVersions = sqliteTable("project_plan_versions", {
+export const projectPlanVersions = pgTable("project_plan_versions", {
   id: text("id").primaryKey().$defaultFn(() => generateUUID()),
   projectId: text("project_id").references(() => projects.id),
   userId: text("user_id").references(() => users.id),
@@ -155,8 +156,8 @@ export const projectPlanVersions = sqliteTable("project_plan_versions", {
   changeLog: text("change_log"), // What changed in this version
   status: text("status").default("draft"), // "draft" | "active" | "archived"
   parentVersionId: text("parent_version_id"), // Reference to previous version (self-reference)
-  createdAt: integer("created_at").$defaultFn(() => Date.now()),
-  updatedAt: integer("updated_at").$defaultFn(() => Date.now()),
+  createdAt: bigint("created_at", { mode: 'number' }).$defaultFn(() => Date.now()),
+  updatedAt: bigint("updated_at", { mode: 'number' }).$defaultFn(() => Date.now()),
 });
 
 // Auth-related schemas
@@ -201,6 +202,7 @@ export const insertProjectSchema = createInsertSchema(projects).pick({
 
 export const insertFileSchema = createInsertSchema(files).pick({
   userId: true,
+  projectId: true,
   filename: true,
   originalName: true,
   mimeType: true,

@@ -511,6 +511,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Project Management
+  app.get("/api/projects", isAuthenticated, async (req, res) => {
+    try {
+      const userId = getUserId(req);
+      const projects = await storage.getProjectsByUserId(userId);
+      res.json(projects);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      res.status(500).json({ error: "Failed to fetch projects" });
+    }
+  });
+
+  app.post("/api/projects", isAuthenticated, async (req, res) => {
+    try {
+      const userId = getUserId(req);
+      const projectData = insertProjectSchema.parse({
+        ...req.body,
+        userId
+      });
+      
+      const project = await storage.createProject(projectData);
+      res.status(201).json(project);
+    } catch (error) {
+      console.error("Error creating project:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid project data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create project" });
+    }
+  });
+
+  app.get("/api/projects/:id", isAuthenticated, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userId = getUserId(req);
+      
+      const project = await storage.getProject(id);
+      if (!project) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      
+      if (project.userId !== userId) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+      
+      res.json(project);
+    } catch (error) {
+      console.error("Error fetching project:", error);
+      res.status(500).json({ error: "Failed to fetch project" });
+    }
+  });
+
+  app.put("/api/projects/:id", isAuthenticated, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userId = getUserId(req);
+      
+      const existingProject = await storage.getProject(id);
+      if (!existingProject || existingProject.userId !== userId) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      
+      // Only allow specific fields to be updated for security
+      const allowedUpdates = {
+        name: req.body.name,
+        description: req.body.description,
+        status: req.body.status,
+        githubUrl: req.body.githubUrl,
+        metadata: req.body.metadata,
+      };
+      
+      // Remove undefined values
+      const updates = Object.fromEntries(
+        Object.entries(allowedUpdates).filter(([_, value]) => value !== undefined)
+      );
+      
+      const updatedProject = await storage.updateProject(id, updates);
+      res.json(updatedProject);
+    } catch (error) {
+      console.error("Error updating project:", error);
+      res.status(500).json({ error: "Failed to update project" });
+    }
+  });
+
+  app.delete("/api/projects/:id", isAuthenticated, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userId = getUserId(req);
+      
+      const project = await storage.getProject(id);
+      if (!project || project.userId !== userId) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      
+      const deleted = await storage.deleteProject(id);
+      res.json({ success: deleted });
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      res.status(500).json({ error: "Failed to delete project" });
+    }
+  });
+
   // File Upload and Analysis
   app.post("/api/files/upload", isAuthenticated, upload.single('file'), async (req, res) => {
     try {
@@ -559,7 +661,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/files", isAuthenticated, async (req, res) => {
     try {
       const userId = getUserId(req); // Server-derived userId
-      const files = await storage.getFilesByUserId(userId);
+      const projectId = req.query.projectId as string;
+      
+      let files;
+      if (projectId && projectId !== 'null' && projectId !== 'undefined') {
+        files = await storage.getFilesByUserIdAndProjectId(userId, projectId);
+      } else {
+        files = await storage.getFilesByUserId(userId);
+      }
+      
       const sanitizedFiles = files.map(file => fileService.sanitizeFileForResponse(file));
       res.json(sanitizedFiles);
     } catch (error) {

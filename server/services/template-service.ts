@@ -29,13 +29,13 @@ export class TemplateService {
         name: "React TypeScript App",
         description: "Modern React application with TypeScript, Vite, and Tailwind CSS",
         category: "web",
-        techStack: {
+        techStack: JSON.stringify({
           frontend: ["React", "TypeScript", "Vite", "Tailwind CSS"],
           backend: [],
           database: [],
           tools: ["ESLint", "Prettier"]
-        },
-        files: [
+        }),
+        files: JSON.stringify([
           {
             path: "package.json",
             content: JSON.stringify({
@@ -142,28 +142,28 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 </html>`,
             type: "markup"
           }
-        ],
-        dependencies: {
+        ]),
+        dependencies: JSON.stringify({
           react: "^18.2.0",
           "react-dom": "^18.2.0"
-        },
+        }),
         instructions: "1. Run 'npm install' to install dependencies\n2. Run 'npm run dev' to start development server\n3. Open http://localhost:5173 in your browser\n4. Start editing src/App.tsx to build your application",
         difficulty: "beginner",
         estimatedTime: "30 minutes",
-        tags: ["react", "typescript", "vite", "tailwind", "frontend"],
+        tags: JSON.stringify(["react", "typescript", "vite", "tailwind", "frontend"]),
         isPublic: true
       },
       {
         name: "Express API Server",
         description: "RESTful API server with Express.js, TypeScript, and PostgreSQL",
         category: "api",
-        techStack: {
+        techStack: JSON.stringify({
           frontend: [],
           backend: ["Node.js", "Express", "TypeScript"],
           database: ["PostgreSQL"],
           tools: ["Nodemon", "ESLint"]
-        },
-        files: [
+        }),
+        files: JSON.stringify([
           {
             path: "package.json",
             content: JSON.stringify({
@@ -291,30 +291,30 @@ export const errorHandler = (
 };`,
             type: "middleware"
           }
-        ],
-        dependencies: {
+        ]),
+        dependencies: JSON.stringify({
           express: "^4.18.2",
           cors: "^2.8.5",
           helmet: "^7.1.0",
           dotenv: "^16.3.1"
-        },
+        }),
         instructions: "1. Run 'npm install' to install dependencies\n2. Create a .env file with DATABASE_URL\n3. Run 'npm run dev' to start development server\n4. Test the API at http://localhost:3000/api/health\n5. Add your database models and expand the API endpoints",
         difficulty: "intermediate",
         estimatedTime: "1-2 hours",
-        tags: ["express", "typescript", "api", "backend", "postgresql"],
+        tags: JSON.stringify(["express", "typescript", "api", "backend", "postgresql"]),
         isPublic: true
       },
       {
         name: "Next.js Full Stack",
         description: "Full-stack Next.js application with TypeScript, Tailwind, and authentication",
         category: "web",
-        techStack: {
+        techStack: JSON.stringify({
           frontend: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
           backend: ["Next.js API Routes"],
           database: ["PostgreSQL"],
           tools: ["Prisma", "NextAuth.js"]
-        },
-        files: [
+        }),
+        files: JSON.stringify([
           {
             path: "package.json",
             content: JSON.stringify({
@@ -415,29 +415,29 @@ export default function RootLayout({
 @tailwind utilities;`,
             type: "styles"
           }
-        ],
-        dependencies: {
+        ]),
+        dependencies: JSON.stringify({
           "next": "14.0.4",
           "react": "^18",
           "react-dom": "^18"
-        },
+        }),
         instructions: "1. Run 'npm install' to install dependencies\n2. Set up your database connection in .env.local\n3. Run 'npx prisma generate' to set up Prisma\n4. Run 'npm run dev' to start development server\n5. Open http://localhost:3000 to see your app",
         difficulty: "intermediate",
         estimatedTime: "2-3 hours",
-        tags: ["nextjs", "react", "typescript", "tailwind", "fullstack"],
+        tags: JSON.stringify(["nextjs", "react", "typescript", "tailwind", "fullstack"]),
         isPublic: true
       },
       {
         name: "Python FastAPI Backend",
         description: "Modern Python API with FastAPI, async/await, and PostgreSQL integration",
         category: "api",
-        techStack: {
+        techStack: JSON.stringify({
           frontend: [],
           backend: ["Python", "FastAPI", "SQLAlchemy"],
           database: ["PostgreSQL"],
           tools: ["Uvicorn", "Pydantic"]
-        },
-        files: [
+        }),
+        files: JSON.stringify([
           {
             path: "requirements.txt",
             content: `fastapi==0.104.1
@@ -637,16 +637,16 @@ async def delete_user(user_id: int, db: Session = Depends(get_db)):
     return {"message": "User deleted successfully"}`,
             type: "routes"
           }
-        ],
-        dependencies: {
+        ]),
+        dependencies: JSON.stringify({
           fastapi: "0.104.1",
           uvicorn: "0.24.0",
           sqlalchemy: "2.0.23"
-        },
+        }),
         instructions: "1. Create a virtual environment: python -m venv venv\n2. Activate it: source venv/bin/activate (Unix) or venv\\Scripts\\activate (Windows)\n3. Install dependencies: pip install -r requirements.txt\n4. Create .env file with DATABASE_URL\n5. Run the server: python main.py\n6. Visit http://localhost:8000/docs for interactive API documentation",
         difficulty: "intermediate",
         estimatedTime: "2-3 hours",
-        tags: ["python", "fastapi", "api", "backend", "sqlalchemy"],
+        tags: JSON.stringify(["python", "fastapi", "api", "backend", "sqlalchemy"]),
         isPublic: true
       }
     ];
