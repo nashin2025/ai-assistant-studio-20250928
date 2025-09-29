@@ -35,10 +35,19 @@
 - **SQLite Storage** - Lightweight, file-based database with zero setup
 
 ### 🎨 Modern Interface
+- **Professional IDE-like Layout** - Three-panel design with sidebar navigation and file tree
 - **Dark/Light Theme** - Responsive design with theme switching
 - **Real-time Updates** - Live chat interface with hot module replacement
 - **Mobile Friendly** - Works on desktop, tablet, and mobile devices
 - **File Drag & Drop** - Easy file upload with drag-and-drop support
+- **Hierarchical File Tree** - Professional file organization with expand/collapse functionality
+
+### 🔧 Professional Development Tools
+- **Code Analysis** - Comprehensive code review with GitHub integration and metrics
+- **Document Analysis** - AI-powered document processing with insights generation
+- **File Manager** - Advanced file organization with nested folder support
+- **Project Templates** - Quick project creation with multiple technology stacks
+- **One-Click Startup** - Platform-specific startup scripts (start.bat for Windows, start.sh for Unix)
 
 ## 🚀 Quick Start
 
@@ -56,8 +65,8 @@ Before installing, ensure you have the following:
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/ai-assistant-studio.git
-cd ai-assistant-studio
+git clone https://github.com/nashin2025/ai-assistant-studio-20250928.git
+cd ai-assistant-studio-20250928
 ```
 
 #### 2. Install Dependencies
@@ -89,8 +98,21 @@ BING_API_KEY=your-bing-api-key
 
 #### 4. Start the Application
 
+**Option 1: Using npm (all platforms):**
 ```bash
 npm run dev
+```
+
+**Option 2: Using platform-specific scripts:**
+
+**Windows:**
+```cmd
+start.bat
+```
+
+**Linux/macOS:**
+```bash
+./start.sh
 ```
 
 The application will be available at `http://localhost:5000`
@@ -117,8 +139,8 @@ The application will be available at `http://localhost:5000`
 
 ```powershell
 # Clone repository
-git clone https://github.com/yourusername/ai-assistant-studio.git
-cd ai-assistant-studio
+git clone https://github.com/nashin2025/ai-assistant-studio-20250928.git
+cd ai-assistant-studio-20250928
 
 # Install dependencies
 npm install
@@ -143,8 +165,8 @@ brew install node git
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/ai-assistant-studio.git
-cd ai-assistant-studio
+git clone https://github.com/nashin2025/ai-assistant-studio-20250928.git
+cd ai-assistant-studio-20250928
 
 # Install dependencies
 npm install
@@ -173,8 +195,8 @@ sudo apt install git
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/ai-assistant-studio.git
-cd ai-assistant-studio
+git clone https://github.com/nashin2025/ai-assistant-studio-20250928.git
+cd ai-assistant-studio-20250928
 
 # Install dependencies
 npm install
@@ -340,27 +362,46 @@ ollama pull mistral
 ### Directory Structure
 
 ```
-ai-assistant-studio/
-├── client/                 # React frontend
+ai-assistant-studio-20250928/
+├── client/                     # React frontend
 │   ├── src/
-│   │   ├── components/    # UI components
-│   │   ├── pages/         # Application pages
-│   │   ├── hooks/         # Custom React hooks
-│   │   └── lib/           # Utility libraries
-├── server/                # Express backend
-│   ├── services/          # Business logic
-│   ├── routes.ts          # API endpoints
-│   ├── localAuth.ts       # Local authentication
-│   ├── localGitHubClient.ts # GitHub integration
-│   └── storage.ts         # Database operations
-├── shared/                # Shared types and schemas
-│   └── schema.ts          # Database schema
-├── data/                  # SQLite database (auto-created)
+│   │   ├── components/        # UI components
+│   │   │   ├── chat/          # Chat interface components
+│   │   │   ├── layout/        # Layout components (sidebar, header, file tree)
+│   │   │   ├── tools/         # Tool-specific components
+│   │   │   └── ui/            # Reusable UI components (shadcn/ui)
+│   │   ├── pages/             # Application pages
+│   │   ├── hooks/             # Custom React hooks
+│   │   ├── contexts/          # React contexts
+│   │   └── lib/               # Utility libraries
+│   └── index.html
+├── server/                     # Express backend
+│   ├── services/              # Business logic services
+│   │   ├── file-service.ts    # File processing
+│   │   ├── github-service.ts  # GitHub integration
+│   │   ├── llm-service.ts     # LLM communication
+│   │   ├── search-service.ts  # Web search
+│   │   └── template-service.ts # Project templates
+│   ├── routes.ts              # API endpoints
+│   ├── localAuth.ts           # Local authentication
+│   ├── localGitHubClient.ts   # GitHub client
+│   └── storage.ts             # Database operations
+├── shared/                     # Shared types and schemas
+│   └── schema.ts              # Database schema definitions
+├── scripts/                    # Utility scripts
+│   ├── start.bat              # Windows startup script
+│   ├── start.sh               # Unix startup script
+│   └── *.ts                   # Development and deployment scripts
+├── data/                       # SQLite database (auto-created)
 │   └── ai-assistant-studio.db
-├── package.json           # Dependencies and scripts
-├── drizzle.config.ts      # Database configuration
-├── .env                   # Environment variables
-└── README.md             # This file
+├── uploads/                    # User uploaded files
+├── generated-projects/         # Generated project templates
+├── attached_assets/            # Attached assets and images
+├── .config/                    # Configuration files
+├── package.json               # Dependencies and scripts
+├── drizzle.config.ts          # Database configuration
+├── .env                       # Environment variables
+└── README.md                  # This file
 ```
 
 ## 🛠️ Development
