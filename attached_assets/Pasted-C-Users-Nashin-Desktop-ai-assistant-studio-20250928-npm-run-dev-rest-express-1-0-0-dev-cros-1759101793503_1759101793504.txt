@@ -1,0 +1,70 @@
+C:\Users\Nashin\Desktop\ai-assistant-studio-20250928>npm run dev
+
+> rest-express@1.0.0 dev
+> cross-env NODE_ENV=development tsx server/index.ts
+
+Re-optimizing dependencies because lockfile has changed
+4:18:53 AM [express] serving on port 5000
+4:19:05 AM [express] GET /api/auth/user 401 in 3ms :: {"message":"Unauthorized"}
+4:20:19 AM [express] POST /api/login 401 in 7ms :: {"error":"Invalid email or password"}
+4:20:46 AM [express] POST /api/login 200 in 83ms :: {"success":true,"user":{"id":"ad87509c-3f63-48b6…
+4:20:47 AM [express] GET /api/auth/user 200 in 3ms :: {"id":"ad87509c-3f63-48b6-8fbd-01d4653b335e","…
+4:20:59 AM [express] GET /api/files 200 in 2ms :: []
+Error fetching GitHub repositories: Error: GITHUB_PERSONAL_ACCESS_TOKEN environment variable is required for GitHub integration
+    at getLocalGitHubClient (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localGitHubClient.ts:10:11)
+    at GitHubService.getUserRepositories (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\github-service.ts:42:29)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:811:48)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at isAuthenticated (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:238:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at strategy.pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\middleware\authenticate.js:355:9)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\strategies\session.js:120:12
+    at pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:352:31)
+    at deserialized (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:364:7)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:99:7)
+Error fetching GitHub repositories: Error: Failed to fetch repositories from GitHub
+    at GitHubService.getUserRepositories (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\github-service.ts:62:13)
+    at async <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:811:28)
+4:21:02 AM [express] GET /api/github/repositories 500 in 9ms :: {"error":"Failed to fetch repositori…
+4:21:16 AM [express] GET /api/auth/user 304 in 3ms :: {"id":"ad87509c-3f63-48b6-8fbd-01d4653b335e","…
+4:21:16 AM [express] GET /api/llm-configurations 200 in 24ms :: []
+4:21:16 AM [express] GET /api/user-preferences 200 in 24ms :: {"id":"3f2b0216-5d59-4969-802c-5111eff…
+4:21:23 AM [express] GET /api/search-engines 200 in 5ms :: []
+4:21:23 AM [express] GET /api/conversations 200 in 8ms :: []
+4:21:23 AM [express] GET /api/files 304 in 9ms :: []
+4:21:37 AM [express] GET /api/projects 200 in 3ms :: []
+Error fetching GitHub repositories: Error: GITHUB_PERSONAL_ACCESS_TOKEN environment variable is required for GitHub integration
+    at getLocalGitHubClient (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localGitHubClient.ts:10:11)
+    at GitHubService.getUserRepositories (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\github-service.ts:42:29)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:811:48)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at isAuthenticated (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:238:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at strategy.pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\middleware\authenticate.js:355:9)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\strategies\session.js:120:12
+    at pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:352:31)
+    at deserialized (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:364:7)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:99:7)
+Error fetching GitHub repositories: Error: Failed to fetch repositories from GitHub
+    at GitHubService.getUserRepositories (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\github-service.ts:62:13)
+    at async <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:811:28)
+4:21:37 AM [express] GET /api/github/repositories 500 in 8ms :: {"error":"Failed to fetch repositori…
+4:21:42 AM [express] GET /api/project-templates 200 in 3ms :: [{"id":"aba4e6e5-abe1-4f72-b5e3-3138ad…
+4:21:57 AM [express] GET /api/files 200 in 5ms :: []
+4:22:14 AM [express] GET /api/auth/user 304 in 3ms :: {"id":"ad87509c-3f63-48b6-8fbd-01d4653b335e","…
+4:22:14 AM [express] GET /api/llm-configurations 304 in 3ms :: []
+4:22:14 AM [express] GET /api/user-preferences 304 in 4ms :: {"id":"3f2b0216-5d59-4969-802c-5111eff6…
