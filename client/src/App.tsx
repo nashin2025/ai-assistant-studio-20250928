@@ -12,6 +12,7 @@ import ProjectTemplates from "@/pages/project-templates";
 import CodeAnalysis from "@/pages/code-analysis";
 import WebSearch from "@/pages/web-search";
 import DocumentAnalysis from "@/pages/document-analysis";
+import FileManager from "@/pages/file-manager";
 import Integrations from "@/pages/integrations";
 import Settings from "@/pages/settings";
 import MainLayout from "@/components/layout/main-layout";
@@ -44,6 +45,7 @@ function Router() {
               <Route path="/code-analysis" component={CodeAnalysis} />
               <Route path="/web-search" component={WebSearch} />
               <Route path="/document-analysis" component={DocumentAnalysis} />
+              <Route path="/file-manager" component={FileManager} />
               <Route path="/integrations" component={Integrations} />
               <Route path="/settings" component={Settings} />
               <Route component={NotFound} />
