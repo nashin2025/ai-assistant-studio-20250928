@@ -10,9 +10,9 @@ export default function ChatInterface() {
   const { messages, isLoading, sendMessage, currentConversation } = useChat();
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex-1 flex flex-col h-full">
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4" data-testid="messages-container">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0" data-testid="messages-container">
         {messages.length === 0 ? (
           <WelcomeMessage />
         ) : (
