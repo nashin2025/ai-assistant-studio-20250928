@@ -1,0 +1,534 @@
+C:\Users\Nashin\Desktop\ai-assistant-studio-20250928>npm run dev
+
+> rest-express@1.0.0 dev
+> cross-env NODE_ENV=development tsx server/index.ts
+
+Creating default admin user...
+Default admin user created:
+Email: admin@localhost
+Password: admin123
+Please change this password after first login!
+Initialized template: React TypeScript App
+Initialized template: Express API Server
+Initialized template: Next.js Full Stack
+Initialized template: Python FastAPI Backend
+5:05:30 AM [express] serving on port 5000
+Browserslist: browsers data (caniuse-lite) is 11 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+5:05:46 AM [express] GET /api/auth/user 401 in 3ms :: {"message":"Unauthorized"}
+5:05:52 AM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+5:05:55 AM [express] POST /api/login 200 in 82ms :: {"success":true,"user":{"id":"23954ad4-55aa-48a4…
+5:05:55 AM [express] GET /api/auth/user 200 in 3ms :: {"id":"23954ad4-55aa-48a4-97b1-fa39f8f9d727","…
+5:05:59 AM [express] GET /api/search-engines 304 in 4ms :: []
+5:05:59 AM [express] GET /api/files 200 in 9ms :: []
+5:05:59 AM [express] GET /api/llm-configurations 200 in 9ms :: []
+5:05:59 AM [express] GET /api/conversations 304 in 9ms :: []
+5:06:06 AM [express] GET /api/auth/user 304 in 1ms :: {"id":"23954ad4-55aa-48a4-97b1-fa39f8f9d727","…
+5:06:07 AM [express] GET /api/llm-configurations 304 in 17ms :: []
+5:06:07 AM [express] GET /api/user-preferences 200 in 17ms :: {"id":"4cbbc02d-fd2b-4b0b-828e-51d5d5b…
+5:06:46 AM [express] POST /api/llm/test-connection 200 in 33ms :: {"connected":true}
+5:06:49 AM [express] POST /api/llm-configurations 200 in 13ms :: {"id":"c4b5d9e2-3fc2-436a-95ae-0455…
+5:06:49 AM [express] GET /api/llm-configurations 200 in 2ms :: [{"id":"c4b5d9e2-3fc2-436a-95ae-04553…
+5:06:54 AM [express] GET /api/search-engines 304 in 1ms :: []
+5:07:07 AM [express] GET /api/projects 304 in 2ms :: []
+GitHub integration not configured - GITHUB_PERSONAL_ACCESS_TOKEN missing
+5:07:07 AM [express] GET /api/github/repositories 200 in 5ms :: []
+5:07:09 AM [express] GET /api/files 304 in 2ms :: []
+5:07:09 AM [express] GET /api/conversations 304 in 2ms :: []
+Error creating project: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "object",
+    "path": [
+      "metadata"
+    ],
+    "message": "Expected string, received object"
+  }
+]
+    at get error (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:587:31)
+    at ZodObject.parse (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:663:22)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:613:40)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at isAuthenticated (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:238:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at strategy.pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\middleware\authenticate.js:355:9)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\strategies\session.js:120:12
+    at pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:352:31)
+    at deserialized (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:364:7)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:99:7) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'object',
+      path: [Array],
+      message: 'Expected string, received object'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'object',
+      path: [Array],
+      message: 'Expected string, received object'
+    }
+  ]
+}
+5:07:14 AM [express] POST /api/projects 500 in 8ms :: {"error":"Failed to create project"}
+Error creating project: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "object",
+    "path": [
+      "metadata"
+    ],
+    "message": "Expected string, received object"
+  }
+]
+    at get error (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:587:31)
+    at ZodObject.parse (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:663:22)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:613:40)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at isAuthenticated (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:238:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at strategy.pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\middleware\authenticate.js:355:9)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\strategies\session.js:120:12
+    at pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:352:31)
+    at deserialized (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:364:7)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:99:7) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'object',
+      path: [Array],
+      message: 'Expected string, received object'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'object',
+      path: [Array],
+      message: 'Expected string, received object'
+    }
+  ]
+}
+5:07:19 AM [express] POST /api/projects 500 in 5ms :: {"error":"Failed to create project"}
+5:07:29 AM [express] GET /api/project-templates 200 in 4ms :: [{"id":"b43b767e-45b8-4211-9926-562e4d…
+5:07:33 AM [express] GET /api/project-templates 200 in 2ms :: [{"id":"12c9eb12-73c4-405b-928a-eb0657…
+5:07:35 AM [express] GET /api/project-templates 200 in 3ms :: [{"id":"b43b767e-45b8-4211-9926-562e4d…
+5:07:35 AM [express] GET /api/project-templates 304 in 2ms :: []
+Generated project files for Next.js Full Stack at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\generated-projects\84bddf0c-fb62-4934-8c81-9f5603cacfc3
+5:07:41 AM [express] POST /api/project-templates/12c9eb12-73c4-405b-928a-eb06571d132b/generate 200 i…
+5:07:55 AM [express] GET /api/project-templates 304 in 1ms :: []
+5:08:22 AM [express] GET /api/projects 200 in 3ms :: [{"id":"84bddf0c-fb62-4934-8c81-9f5603cacfc3","…
+5:08:27 AM [express] GET /api/files 200 in 1ms :: []
+5:08:55 AM [express] GET /api/projects/84bddf0c-fb62-4934-8c81-9f5603cacfc3/versions 200 in 3ms :: []
+Error creating project plan version: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "goals"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "requirements"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "techStack"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "resources"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "risks"
+    ],
+    "message": "Expected string, received array"
+  }
+]
+    at get error (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:587:31)
+    at ZodObject.parse (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:663:22)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:716:51) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    }
+  ]
+}
+5:09:20 AM [express] POST /api/projects/84bddf0c-fb62-4934-8c81-9f5603cacfc3/versions 500 in 5ms :: …
+Error creating project plan version: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "goals"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "requirements"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "techStack"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "resources"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "risks"
+    ],
+    "message": "Expected string, received array"
+  }
+]
+    at get error (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:587:31)
+    at ZodObject.parse (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:663:22)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:716:51) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    }
+  ]
+}
+5:09:26 AM [express] POST /api/projects/84bddf0c-fb62-4934-8c81-9f5603cacfc3/versions 500 in 4ms :: …
+Error creating project plan version: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "goals"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "requirements"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "techStack"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "resources"
+    ],
+    "message": "Expected string, received array"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "array",
+    "path": [
+      "risks"
+    ],
+    "message": "Expected string, received array"
+  }
+]
+    at get error (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:587:31)
+    at ZodObject.parse (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:663:22)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:716:51) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    },
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'array',
+      path: [Array],
+      message: 'Expected string, received array'
+    }
+  ]
+}
+5:09:35 AM [express] POST /api/projects/84bddf0c-fb62-4934-8c81-9f5603cacfc3/versions 500 in 3ms :: …
