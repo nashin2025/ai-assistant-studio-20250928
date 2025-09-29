@@ -31,8 +31,8 @@
 ### 🛡️ Privacy & Security
 - **Fully Local** - No external dependencies except optional search APIs
 - **Data Ownership** - All your data stays on your machine
-- **Secure Authentication** - Local user management with encrypted passwords
-- **SQLite Storage** - Lightweight, file-based database with zero setup
+- **Secure Authentication** - GitHub OAuth with secure session management
+- **PostgreSQL Storage** - Robust, scalable database with auto-setup capabilities
 
 ### 🎨 Modern Interface
 - **Professional IDE-like Layout** - Three-panel design with sidebar navigation and file tree
@@ -58,7 +58,7 @@ Before installing, ensure you have the following:
 - **Node.js 18+** - [Download from nodejs.org](https://nodejs.org/)
 - **Git** - For version control and GitHub integration
 
-> 🎉 **No Database Installation Required!** The application uses SQLite with automatic setup.
+> 🎉 **Database Auto-Setup!** PostgreSQL database is automatically configured on Replit with zero manual setup.
 
 ### Installation
 
@@ -123,7 +123,7 @@ start.bat
 
 The application will be available at `http://localhost:5000`
 
-**Database Setup:** The SQLite database is created automatically on first startup at `data/ai-assistant-studio.db`
+**Database Setup:** PostgreSQL database is automatically configured on Replit (or via DATABASE_URL environment variable)
 
 ## 🖥️ Platform-Specific Setup
 
@@ -151,7 +151,7 @@ cd ai-assistant-studio-20250928
 # Install dependencies
 npm install
 
-# Start the application (SQLite database auto-created)
+# Start the application (PostgreSQL auto-configured)
 npm run dev
 ```
 
@@ -177,7 +177,7 @@ cd ai-assistant-studio-20250928
 # Install dependencies
 npm install
 
-# Start the application (SQLite database auto-created)
+# Start the application (PostgreSQL auto-configured)
 npm run dev
 ```
 
@@ -207,7 +207,7 @@ cd ai-assistant-studio-20250928
 # Install dependencies
 npm install
 
-# Start the application (SQLite database auto-created)
+# Start the application (PostgreSQL auto-configured)
 npm run dev
 ```
 
@@ -350,15 +350,15 @@ ollama pull mistral
 **Backend:**
 - Node.js with Express
 - TypeScript for type safety
-- Drizzle ORM with SQLite
-- Passport.js for authentication
+- Drizzle ORM with PostgreSQL
+- GitHub OAuth authentication
 - Multer for file uploads
 
 **Database:**
-- SQLite with better-sqlite3
-- Automatic database creation
-- Zero configuration required
-- Cross-platform compatibility
+- PostgreSQL (Neon-backed on Replit)
+- Automatic database provisioning
+- Zero manual configuration
+- Scalable and robust
 
 **Local LLM Integration:**
 - OpenAI-compatible API support
@@ -398,8 +398,7 @@ ai-assistant-studio-20250928/
 │   ├── start.bat              # Windows startup script
 │   ├── start.sh               # Unix startup script
 │   └── *.ts                   # Development and deployment scripts
-├── data/                       # SQLite database (auto-created)
-│   └── ai-assistant-studio.db
+├── data/                       # Application data directory
 ├── uploads/                    # User uploaded files
 ├── generated-projects/         # Generated project templates
 ├── attached_assets/            # Attached assets and images
@@ -450,9 +449,9 @@ npm run db:generate
 ### Local Hosting Security
 
 1. **Database Security:**
-   - SQLite file stored locally in `data/` directory
-   - No network exposure by default
-   - Regular file backups recommended
+   - PostgreSQL with secure connection pooling
+   - Environment-based credentials
+   - Regular backups recommended
 
 2. **Session Security:**
    - Use a strong `SESSION_SECRET` (32+ characters)
@@ -485,9 +484,9 @@ npm run db:generate
 ### Common Issues
 
 **Database Issues:**
-- SQLite database is created automatically in `data/ai-assistant-studio.db`
-- Check file permissions if database creation fails
-- Backup and restore using standard SQLite tools
+- PostgreSQL database is auto-configured via DATABASE_URL
+- Check environment variables if connection fails
+- Use standard PostgreSQL backup tools (pg_dump)
 
 **Port 5000 Already in Use:**
 ```bash
@@ -520,9 +519,9 @@ npm run dev
 ### Performance Optimization
 
 **Database:**
-- SQLite performs well for local use
-- Regular VACUUM operations for large datasets
-- Index optimization as needed
+- PostgreSQL provides excellent performance
+- Connection pooling for optimal resource usage
+- Automatic index optimization
 
 **Frontend:**
 - Browser caching enabled
@@ -606,25 +605,26 @@ module.exports = {
 
 ## 🎯 What's New in This Version
 
-### 🗄️ SQLite Database Conversion
+### 🗄️ PostgreSQL Integration
 
-- **Zero Setup:** No more PostgreSQL installation required
-- **Cross-Platform:** Works identically on Windows, macOS, and Linux
-- **Lightweight:** Single database file in `data/` directory
-- **Portable:** Easy backup and migration
+- **Auto-Setup:** PostgreSQL database automatically configured on Replit
+- **Scalable:** Robust database solution with connection pooling
+- **Production-Ready:** Neon-backed PostgreSQL for reliability
+- **Zero Config:** DATABASE_URL automatically provisioned
 
-### 🚀 Simplified Installation
+### 🚀 Enhanced Project Management
 
-- **Reduced Dependencies:** Only Node.js and Git required
-- **Auto-Configuration:** Database created automatically on first run
-- **Instant Start:** `npm install && npm run dev` and you're ready!
+- **Project Templates:** Pre-built templates for React, Express, Next.js, Python FastAPI
+- **File Organization:** Comprehensive project-based file management
+- **GitHub Integration:** OAuth authentication with repository access
+- **Template System:** Quick project initialization with best practices
 
-### 🔧 Enhanced Local Hosting
+### 🔧 Improved Architecture
 
-- **True Local Independence:** No external database services
-- **Better Portability:** Entire application in one directory
-- **Easier Development:** No database setup for contributors
-- **Simple Backup:** Copy the `data/` directory
+- **Drizzle ORM:** Type-safe database operations
+- **Session Management:** Secure PostgreSQL-backed sessions
+- **Service Layer:** Modular architecture with dedicated services
+- **Auto-Migration:** Database schema push with `npm run db:push`
 
 ## 🤝 Contributing
 
@@ -655,7 +655,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [LMStudio](https://lmstudio.ai/) for model hosting
 - [shadcn/ui](https://ui.shadcn.com/) for UI components
 - [Drizzle ORM](https://orm.drizzle.team/) for database management
-- [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) for SQLite support
+- [PostgreSQL](https://www.postgresql.org/) for robust data storage
+- [Neon](https://neon.tech/) for serverless PostgreSQL on Replit
 - [Vite](https://vitejs.dev/) for build tooling
 
 ## 📞 Support
@@ -669,8 +670,8 @@ Having issues? Here's how to get help:
 
 ---
 
-**🎉 Enjoy your fully local AI Assistant Studio!**
+**🎉 Enjoy your AI Assistant Studio!**
 
 *Keep your data private, your models local, and your productivity high.*
 
-> **🆕 Now with zero-setup SQLite database for the ultimate local hosting experience!**
+> **🆕 Now with auto-configured PostgreSQL database for scalable, production-ready deployment!**
