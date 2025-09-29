@@ -24,8 +24,8 @@ export default function Landing() {
       const endpoint = isLoginMode ? "/api/login" : "/api/register";
       await apiRequest("POST", endpoint, { email, password });
 
-      // Redirect to app on successful login/register
-      window.location.href = "/app";
+      // Redirect to home on successful login/register
+      window.location.href = "/";
     } catch (error) {
       toast({
         title: "Error",

@@ -160,7 +160,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/messages", isAuthenticated, async (req, res) => {
     try {
-      const data = insertMessageSchema.parse(req.body);
+      // Transform metadata object to JSON string if it exists
+      const requestData = { ...req.body };
+      if (requestData.metadata && typeof requestData.metadata === 'object') {
+        requestData.metadata = JSON.stringify(requestData.metadata);
+      }
+      
+      const data = insertMessageSchema.parse(requestData);
       const userId = getUserId(req);
       
       // Verify conversation ownership before creating message
@@ -515,14 +521,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No file uploaded" });
       }
 
+      // Use targetPath if provided (for hierarchical uploads), otherwise use original filename
+      const targetPath = req.body.targetPath;
+      const finalFileName = targetPath || file.originalname;
+
+      console.log("Upload Debug - File originalname:", file.originalname);
+      console.log("Upload Debug - Target path:", targetPath);
+      console.log("Upload Debug - Final filename:", finalFileName);
+      console.log("Upload Debug - File details:", {
+        fieldname: file.fieldname,
+        originalname: file.originalname,
+        encoding: file.encoding,
+        mimetype: file.mimetype,
+        size: file.size
+      });
+
       const savedFile = await fileService.saveFile(
         userId,
-        file.originalname,
+        finalFileName,
         file.buffer,
         file.mimetype
       );
 
-      res.json(savedFile);
+      console.log("Upload Debug - Saved file:", {
+        id: savedFile.id,
+        originalName: savedFile.originalName,
+        filename: savedFile.filename
+      });
+
+      res.json(fileService.sanitizeFileForResponse(savedFile));
     } catch (error) {
       console.error("Error uploading file:", error);
       res.status(500).json({ error: "Failed to upload file" });
@@ -533,7 +560,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = getUserId(req); // Server-derived userId
       const files = await storage.getFilesByUserId(userId);
-      res.json(files);
+      const sanitizedFiles = files.map(file => fileService.sanitizeFileForResponse(file));
+      res.json(sanitizedFiles);
     } catch (error) {
       console.error("Error fetching files:", error);
       res.status(500).json({ error: "Failed to fetch files" });
@@ -592,6 +620,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting file:", error);
       res.status(500).json({ error: "Failed to delete file" });
+    }
+  });
+
+  // Create new text/code file
+  app.post("/api/files/create", isAuthenticated, async (req, res) => {
+    try {
+      const userId = getUserId(req);
+      const { filename, content, language } = req.body;
+      
+      if (!filename || content === undefined) {
+        return res.status(400).json({ error: "Filename and content are required" });
+      }
+      
+      // Validate content size (max 10MB for text files)
+      if (typeof content !== 'string' || content.length > 10 * 1024 * 1024) {
+        return res.status(400).json({ error: "Content must be a string and under 10MB" });
+      }
+      
+      // Validate filename
+      if (typeof filename !== 'string' || filename.length > 255 || !filename.trim()) {
+        return res.status(400).json({ error: "Invalid filename" });
+      }
+      
+      // Determine mime type based on file extension
+      const ext = filename.split('.').pop()?.toLowerCase();
+      let mimeType = 'text/plain';
+      
+      const mimeTypes: Record<string, string> = {
+        'js': 'text/javascript',
+        'jsx': 'text/javascript',
+        'ts': 'text/typescript',
+        'tsx': 'text/typescript',
+        'py': 'text/x-python',
+        'html': 'text/html',
+        'css': 'text/css',
+        'json': 'application/json',
+        'md': 'text/markdown',
+        'txt': 'text/plain',
+        'java': 'text/x-java-source',
+        'cpp': 'text/x-c++src',
+        'c': 'text/x-csrc',
+        'go': 'text/x-go',
+        'rs': 'text/x-rustsrc',
+        'rb': 'text/x-ruby'
+      };
+      
+      if (ext && mimeTypes[ext]) {
+        mimeType = mimeTypes[ext];
+      }
+      
+      const contentBuffer = Buffer.from(content, 'utf8');
+      const savedFile = await fileService.saveFile(userId, filename, contentBuffer, mimeType);
+      
+      res.json(fileService.sanitizeFileForResponse(savedFile));
+    } catch (error) {
+      console.error("Error creating file:", error);
+      res.status(500).json({ error: "Failed to create file" });
+    }
+  });
+
+  // Update existing text/code file
+  app.put("/api/files/:id/content", isAuthenticated, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userId = getUserId(req);
+      const { content } = req.body;
+      
+      if (content === undefined) {
+        return res.status(400).json({ error: "Content is required" });
+      }
+      
+      // Validate content size (max 10MB for text files)
+      if (typeof content !== 'string' || content.length > 10 * 1024 * 1024) {
+        return res.status(400).json({ error: "Content must be a string and under 10MB" });
+      }
+      
+      // Verify file ownership
+      const file = await storage.getFile(id);
+      if (!file) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      if (file.userId !== userId) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+      
+      const contentBuffer = Buffer.from(content, 'utf8');
+      const updatedFile = await fileService.updateFileContent(id, contentBuffer);
+      
+      res.json(fileService.sanitizeFileForResponse(updatedFile));
+    } catch (error) {
+      console.error("Error updating file:", error);
+      res.status(500).json({ error: "Failed to update file" });
+    }
+  });
+
+  // Get file content as text (for code viewer)
+  app.get("/api/files/:id/text", isAuthenticated, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userId = getUserId(req);
+      
+      const file = await storage.getFile(id);
+      if (!file) {
+        return res.status(404).json({ error: "File not found" });
+      }
+      
+      // Verify file ownership
+      if (file.userId !== userId) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+      
+      const content = await fileService.getFileContent(file);
+      const textContent = content.toString('utf8');
+      
+      res.json({ content: textContent, file: fileService.sanitizeFileForResponse(file) });
+    } catch (error) {
+      console.error("Error fetching file text:", error);
+      res.status(500).json({ error: "Failed to fetch file text" });
     }
   });
 
@@ -1205,6 +1351,106 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.status(500).json({ 
           success: false, 
           error: "Failed to commit README.md"
+        });
+      }
+    }
+  });
+
+  // Push workspace changes to GitHub (enhanced Monaco Editor features)
+  app.post("/api/github/push-workspace", isAuthenticated, async (req, res) => {
+    try {
+      const { repo, commitMessage = "Add Replit-like Monaco Editor with advanced features" } = req.body;
+      
+      if (!repo) {
+        return res.status(400).json({
+          success: false,
+          error: 'Repository name is required'
+        });
+      }
+      
+      // Get authenticated user's GitHub info
+      const { getUncachableGitHubClient } = require('./services/github-export');
+      const octokit = await getUncachableGitHubClient();
+      const authenticatedUser = await octokit.users.getAuthenticated();
+      const owner = authenticatedUser.data.login;
+
+      // Verify user has write access to the repository
+      try {
+        const repoInfo = await octokit.repos.get({ owner, repo });
+        if (!repoInfo.data.permissions?.push) {
+          return res.status(403).json({
+            success: false,
+            error: 'No write access to this repository'
+          });
+        }
+      } catch (error: any) {
+        if (error.status === 404) {
+          return res.status(404).json({
+            success: false,
+            error: 'Repository not found or no access'
+          });
+        }
+        throw error;
+      }
+
+      // Read the enhanced file-manager.tsx with Replit-like features
+      let fileManagerContent: string;
+      try {
+        fileManagerContent = await fs.readFile('./client/src/pages/file-manager.tsx', 'utf-8');
+      } catch (error: any) {
+        if (error.code === 'ENOENT') {
+          return res.status(404).json({
+            success: false,
+            error: 'Enhanced file-manager.tsx not found'
+          });
+        }
+        throw error;
+      }
+      
+      console.log(`Pushing enhanced Monaco Editor to ${owner}/${repo}`);
+      
+      // Commit the enhanced file-manager.tsx
+      const result = await githubExportService.commitSingleFile(
+        owner,
+        repo,
+        'client/src/pages/file-manager.tsx',
+        fileManagerContent,
+        commitMessage
+      );
+      
+      res.json({
+        success: true,
+        commitSha: result.commit.sha,
+        repositoryUrl: `https://github.com/${owner}/${repo}`,
+        message: 'Enhanced Monaco Editor with Replit-like features committed successfully',
+        features: [
+          'Real-time error checking and diagnostics',
+          'Advanced IntelliSense with code completion', 
+          'Professional code formatting with format-on-save',
+          'Multi-language linting (JS/TS/Python/JSON)',
+          'Enhanced UI with diagnostics panel',
+          'Professional keyboard shortcuts'
+        ]
+      });
+      
+    } catch (error: any) {
+      console.error("Workspace push failed:", error);
+      
+      // Map common GitHub API errors to appropriate HTTP status codes
+      if (error.status === 403) {
+        res.status(403).json({ 
+          success: false, 
+          error: "Permission denied - check repository access"
+        });
+      } else if (error.status === 404) {
+        res.status(404).json({ 
+          success: false, 
+          error: "Repository not found"
+        });
+      } else {
+        res.status(500).json({ 
+          success: false, 
+          error: "Failed to push workspace changes"
         });
       }
     }

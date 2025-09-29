@@ -16,6 +16,7 @@ import { useFileUpload } from "@/hooks/use-file-upload";
 import { useToast } from "@/hooks/use-toast";
 import type { File as FileType } from "@shared/schema";
 import FileUploadZone from "@/components/chat/file-upload-zone";
+import { CodeBlock } from "@/components/ui/code-block";
 
 interface FileTreeProps {
   files: FileType[];
@@ -24,8 +25,18 @@ interface FileTreeProps {
   onFileDelete: (file: FileType) => void;
 }
 
+interface TreeNode {
+  name: string;
+  path: string;
+  type: 'file' | 'folder';
+  file?: FileType;
+  children: TreeNode[];
+  isExpanded: boolean;
+}
+
 function FileTree({ files, selectedFile, onFileSelect, onFileDelete }: FileTreeProps) {
   const { getFileIcon } = useFileUpload();
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
 
   const formatFileSize = (size: number) => {
     if (size < 1024) return `${size} B`;
@@ -38,9 +49,166 @@ function FileTree({ files, selectedFile, onFileSelect, onFileDelete }: FileTreeP
     return new Date(timestamp).toLocaleDateString();
   };
 
+  // Build hierarchical tree structure from flat file list
+  const buildFileTree = (files: FileType[]): TreeNode[] => {
+    const root: TreeNode[] = [];
+    const nodeMap = new Map<string, TreeNode>();
+
+    // Create root node
+    const rootNode: TreeNode = {
+      name: 'root',
+      path: '',
+      type: 'folder',
+      children: [],
+      isExpanded: true
+    };
+    nodeMap.set('', rootNode);
+
+    files.forEach(file => {
+      const pathParts = file.originalName.split('/');
+      let currentPath = '';
+      let currentParent = rootNode;
+
+      // Create folder nodes for each part of the path
+      for (let i = 0; i < pathParts.length - 1; i++) {
+        const part = pathParts[i];
+        const newPath = currentPath ? `${currentPath}/${part}` : part;
+        
+        if (!nodeMap.has(newPath)) {
+          const folderNode: TreeNode = {
+            name: part,
+            path: newPath,
+            type: 'folder',
+            children: [],
+            isExpanded: expandedFolders.has(newPath)
+          };
+          nodeMap.set(newPath, folderNode);
+          currentParent.children.push(folderNode);
+        }
+        
+        currentParent = nodeMap.get(newPath)!;
+        currentPath = newPath;
+      }
+
+      // Create file node
+      const fileName = pathParts[pathParts.length - 1];
+      const fileNode: TreeNode = {
+        name: fileName,
+        path: file.originalName,
+        type: 'file',
+        file: file,
+        children: [],
+        isExpanded: false
+      };
+      currentParent.children.push(fileNode);
+    });
+
+    // Sort children: folders first, then files, both alphabetically
+    const sortNodes = (nodes: TreeNode[]) => {
+      nodes.sort((a, b) => {
+        if (a.type !== b.type) {
+          return a.type === 'folder' ? -1 : 1;
+        }
+        return a.name.localeCompare(b.name);
+      });
+      nodes.forEach(node => sortNodes(node.children));
+    };
+
+    sortNodes(rootNode.children);
+    return rootNode.children;
+  };
+
+  const toggleFolder = (path: string) => {
+    setExpandedFolders(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(path)) {
+        newSet.delete(path);
+      } else {
+        newSet.add(path);
+      }
+      return newSet;
+    });
+  };
+
+  const renderTreeNode = (node: TreeNode, depth: number = 0): React.ReactNode => {
+    const indentStyle = { paddingLeft: `${depth * 20}px` };
+    const isExpanded = expandedFolders.has(node.path);
+
+    if (node.type === 'folder') {
+      return (
+        <div key={node.path}>
+          <div
+            className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-accent transition-colors"
+            style={indentStyle}
+            onClick={() => toggleFolder(node.path)}
+            data-testid={`folder-${node.path}`}
+          >
+            <i className={`fas fa-chevron-${isExpanded ? 'down' : 'right'} text-xs text-muted-foreground`}></i>
+            <i className={`fas fa-folder${isExpanded ? '-open' : ''} text-primary`}></i>
+            <span className="font-medium text-sm">{node.name}</span>
+            <span className="text-xs text-muted-foreground ml-auto">{node.children.length} items</span>
+          </div>
+          {isExpanded && (
+            <div className="ml-4">
+              {node.children.map(child => renderTreeNode(child, depth + 1))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // File node
+    const file = node.file!;
+    const isSelected = selectedFile?.id === file.id;
+
+    return (
+      <div
+        key={file.id}
+        className={`group flex items-center gap-2 p-2 rounded cursor-pointer transition-colors hover:bg-accent ${
+          isSelected ? 'bg-accent border-l-2 border-primary' : ''
+        }`}
+        style={indentStyle}
+        onClick={() => onFileSelect(file)}
+        data-testid={`file-item-${file.id}`}
+      >
+        <i className={`${getFileIcon(file.originalName, file.mimeType)}`}></i>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-sm truncate" data-testid={`file-name-${file.id}`}>
+              {node.name}
+            </span>
+            {file.analysis && typeof file.analysis === 'object' && (file.analysis as any).language && (
+              <Badge variant="secondary" className="text-xs px-1 py-0">
+                {(file.analysis as any).language}
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span>{formatFileSize(file.size)}</span>
+            <span>{formatDate(file.createdAt)}</span>
+          </div>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
+          onClick={(e) => {
+            e.stopPropagation();
+            onFileDelete(file);
+          }}
+          data-testid={`button-delete-${file.id}`}
+        >
+          <i className="fas fa-trash text-xs text-destructive"></i>
+        </Button>
+      </div>
+    );
+  };
+
+  const treeNodes = buildFileTree(files);
+
   return (
     <ScrollArea className="h-[600px]">
-      <div className="space-y-2 p-4">
+      <div className="p-3">
         {files.length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
             <i className="fas fa-folder-open text-4xl mb-4 opacity-50"></i>
@@ -48,44 +216,19 @@ function FileTree({ files, selectedFile, onFileSelect, onFileDelete }: FileTreeP
             <p className="text-sm">Create a new file to get started</p>
           </div>
         ) : (
-          files.map((file) => (
-            <div
-              key={file.id}
-              className={`group flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover:bg-accent ${
-                selectedFile?.id === file.id ? 'bg-accent border-primary' : 'border-border'
-              }`}
-              onClick={() => onFileSelect(file)}
-              data-testid={`file-item-${file.id}`}
-            >
-              <i className={`${getFileIcon(file.originalName, file.mimeType)} text-lg text-primary`}></i>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium truncate" data-testid={`file-name-${file.id}`}>
-                  {file.originalName}
-                </p>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span>{formatFileSize(file.size)}</span>
-                  <span>{formatDate(file.createdAt)}</span>
-                  {file.analysis && typeof file.analysis === 'object' && (file.analysis as any).language && (
-                    <Badge variant="secondary" className="text-xs">
-                      {(file.analysis as any).language}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onFileDelete(file);
-                }}
-                data-testid={`button-delete-${file.id}`}
-              >
-                <i className="fas fa-trash text-destructive"></i>
-              </Button>
+          <div className="space-y-1">
+            {/* Project Root Header */}
+            <div className="flex items-center gap-2 p-2 mb-2 bg-muted/50 rounded border-b">
+              <i className="fas fa-project-diagram text-primary"></i>
+              <span className="font-semibold text-sm">Project Files</span>
+              <span className="text-xs text-muted-foreground ml-auto">{files.length} files</span>
             </div>
-          ))
+            
+            {/* Tree Structure */}
+            <div className="space-y-0.5">
+              {treeNodes.map(node => renderTreeNode(node, 0))}
+            </div>
+          </div>
         )}
       </div>
     </ScrollArea>
@@ -1190,6 +1333,285 @@ function CodeViewer({ file, content, onContentChange, onSave, isLoading, isSavin
   );
 }
 
+// File Preview Component
+interface FilePreviewProps {
+  file: FileType | null;
+  content: string;
+  isLoading: boolean;
+}
+
+function FilePreview({ file, content, isLoading }: FilePreviewProps) {
+  const { getFileUrl } = useFileUpload();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[400px]">
+        <div className="text-center">
+          <i className="fas fa-spinner fa-spin text-xl mb-2"></i>
+          <p className="text-sm text-muted-foreground">Loading preview...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!file) {
+    return (
+      <div className="flex items-center justify-center h-[400px] text-muted-foreground">
+        <div className="text-center">
+          <i className="fas fa-eye text-4xl mb-4 opacity-50"></i>
+          <p className="text-sm">Select a file to preview</p>
+        </div>
+      </div>
+    );
+  }
+
+  const getLanguageFromFile = (filename: string, analysis?: any): string => {
+    // Use analysis if available
+    if (analysis && typeof analysis === 'object' && analysis.language) {
+      return analysis.language.toLowerCase();
+    }
+    
+    // Check for extensionless files first
+    const lowerFilename = filename.toLowerCase();
+    if (lowerFilename === 'dockerfile') return 'dockerfile';
+    if (lowerFilename === 'makefile') return 'makefile';
+    if (lowerFilename === 'procfile') return 'shell';
+    if (lowerFilename === 'jenkinsfile') return 'groovy';
+    if (lowerFilename === 'vagrantfile') return 'ruby';
+    if (lowerFilename === 'gemfile' || lowerFilename === 'rakefile') return 'ruby';
+    
+    // Fallback to extension
+    const extension = filename.split('.').pop()?.toLowerCase() || '';
+    const extMap: Record<string, string> = {
+      'js': 'javascript',
+      'jsx': 'javascript',
+      'ts': 'typescript',
+      'tsx': 'typescript',
+      'py': 'python',
+      'java': 'java',
+      'cpp': 'cpp',
+      'c': 'c',
+      'h': 'c',
+      'go': 'go',
+      'rs': 'rust',
+      'html': 'html',
+      'css': 'css',
+      'scss': 'scss',
+      'sass': 'sass',
+      'json': 'json',
+      'xml': 'xml',
+      'yml': 'yaml',
+      'yaml': 'yaml',
+      'md': 'markdown',
+      'sql': 'sql',
+      'php': 'php',
+      'rb': 'ruby',
+      'swift': 'swift',
+      'sh': 'shell',
+      'bash': 'shell',
+      'dockerfile': 'dockerfile',
+      'makefile': 'makefile'
+    };
+    
+    return extMap[extension] || 'plaintext';
+  };
+
+  const renderPreview = () => {
+    const filename = file.originalName.toLowerCase();
+    const extension = filename.split('.').pop()?.toLowerCase() || '';
+    const mimeType = file.mimeType || '';
+
+    // Image files
+    if (mimeType.startsWith('image/') || ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'ico'].includes(extension)) {
+      return (
+        <div className="p-4 h-[400px] overflow-auto">
+          <div className="flex flex-col items-center gap-4">
+            <img 
+              src={getFileUrl(file.id)} 
+              alt={file.originalName}
+              className="max-w-full max-h-80 object-contain rounded border"
+              style={{ imageRendering: extension === 'ico' ? 'pixelated' : 'auto' }}
+            />
+            <div className="text-center text-sm text-muted-foreground">
+              <p className="font-medium">{file.originalName}</p>
+              <p>{(file.size / 1024).toFixed(1)} KB</p>
+              {extension === 'svg' && <p className="text-xs mt-1">Vector graphics</p>}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // PDF files
+    if (mimeType.includes('pdf') || extension === 'pdf') {
+      return (
+        <div className="p-4 h-[400px]">
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+            <i className="fas fa-file-pdf text-6xl mb-4 text-red-500"></i>
+            <p className="font-medium">{file.originalName}</p>
+            <p className="text-sm">{(file.size / 1024).toFixed(1)} KB</p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-4"
+              onClick={() => window.open(getFileUrl(file.id), '_blank')}
+            >
+              <i className="fas fa-external-link-alt mr-2"></i>
+              Open PDF
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    // Audio files
+    if (mimeType.startsWith('audio/') || ['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a'].includes(extension)) {
+      return (
+        <div className="p-4 h-[400px]">
+          <div className="flex flex-col items-center justify-center h-full">
+            <i className="fas fa-music text-6xl mb-4 text-pink-500"></i>
+            <p className="font-medium mb-2">{file.originalName}</p>
+            <p className="text-sm text-muted-foreground mb-4">{(file.size / 1024).toFixed(1)} KB</p>
+            <audio controls className="w-full max-w-sm">
+              <source src={getFileUrl(file.id)} type={mimeType} />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        </div>
+      );
+    }
+
+    // Video files
+    if (mimeType.startsWith('video/') || ['mp4', 'avi', 'mkv', 'mov', 'wmv', 'webm'].includes(extension)) {
+      return (
+        <div className="p-4 h-[400px]">
+          <div className="flex flex-col items-center gap-4">
+            <video controls className="max-w-full max-h-64 rounded border">
+              <source src={getFileUrl(file.id)} type={mimeType} />
+              Your browser does not support the video element.
+            </video>
+            <div className="text-center text-sm text-muted-foreground">
+              <p className="font-medium">{file.originalName}</p>
+              <p>{(file.size / 1024 / 1024).toFixed(1)} MB</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Archive files
+    if (mimeType.includes('zip') || mimeType.includes('archive') || 
+        ['zip', 'rar', '7z', 'tar', 'gz', 'bz2'].includes(extension)) {
+      return (
+        <div className="p-4 h-[400px]">
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+            <i className="fas fa-file-archive text-6xl mb-4 text-yellow-600"></i>
+            <p className="font-medium">{file.originalName}</p>
+            <p className="text-sm">{(file.size / 1024).toFixed(1)} KB</p>
+            <p className="text-xs mt-2">Archive file</p>
+          </div>
+        </div>
+      );
+    }
+
+    // JSON files - pretty formatted
+    if (extension === 'json' && content) {
+      try {
+        const jsonData = JSON.parse(content);
+        return (
+          <div className="h-[400px] overflow-auto">
+            <CodeBlock
+              code={JSON.stringify(jsonData, null, 2)}
+              language="json"
+              filename={file.originalName}
+              showLineNumbers={false}
+              className="border-0"
+            />
+          </div>
+        );
+      } catch (e) {
+        // If JSON parsing fails, fall through to code preview
+      }
+    }
+
+    // Markdown files - rendered
+    if (extension === 'md' || extension === 'markdown') {
+      return (
+        <div className="h-[400px] overflow-auto">
+          <div className="p-4 prose prose-sm dark:prose-invert max-w-none">
+            <div className="whitespace-pre-wrap font-mono text-sm">
+              {content || 'No content'}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Code files - syntax highlighted
+    if (content && ['js', 'jsx', 'ts', 'tsx', 'py', 'java', 'cpp', 'c', 'h', 'go', 'rs', 'html', 'css', 'scss', 'sass', 'php', 'rb', 'swift', 'sh', 'bash', 'sql', 'xml', 'yaml', 'yml', 'dockerfile', 'makefile'].includes(extension) ||
+        filename === 'dockerfile' || filename === 'makefile' || filename === 'procfile' || filename === 'jenkinsfile') {
+      const language = getLanguageFromFile(file.originalName, file.analysis);
+      
+      return (
+        <div className="h-[400px] overflow-auto">
+          <CodeBlock
+            code={content}
+            language={language}
+            filename={file.originalName}
+            showLineNumbers={false}
+            className="border-0"
+          />
+        </div>
+      );
+    }
+
+    // Text files - simple preview
+    if (content && (mimeType.startsWith('text/') || ['txt', 'log', 'ini', 'cfg', 'conf', 'env'].includes(extension))) {
+      return (
+        <div className="h-[400px] overflow-auto">
+          <div className="p-4">
+            <pre className="whitespace-pre-wrap font-mono text-sm text-foreground">
+              {content}
+            </pre>
+          </div>
+        </div>
+      );
+    }
+
+    // Binary or unknown files
+    return (
+      <div className="p-4 h-[400px]">
+        <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+          <i className="fas fa-file text-6xl mb-4 opacity-50"></i>
+          <p className="font-medium">{file.originalName}</p>
+          <p className="text-sm">{(file.size / 1024).toFixed(1)} KB</p>
+          <p className="text-xs mt-2">Binary file - no preview available</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-4"
+            onClick={() => {
+              const link = document.createElement('a');
+              link.href = getFileUrl(file.id);
+              link.download = file.originalName;
+              link.click();
+            }}
+          >
+            <i className="fas fa-download mr-2"></i>
+            Download
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <ScrollArea className="h-[500px]">
+      {renderPreview()}
+    </ScrollArea>
+  );
+}
+
 export default function FileManager() {
   const [selectedFile, setSelectedFile] = useState<FileType | null>(null);
   const [fileContent, setFileContent] = useState("");
@@ -1469,16 +1891,16 @@ export default function FileManager() {
         />
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-4">
         {/* File Tree */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <i className="fas fa-folder-tree text-primary"></i>
+        <Card className="xl:col-span-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <i className="fas fa-sitemap text-primary"></i>
               Files
             </CardTitle>
-            <CardDescription>
-              {files.length} file{files.length !== 1 ? 's' : ''} total
+            <CardDescription className="text-sm">
+              Project structure
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
@@ -1497,23 +1919,23 @@ export default function FileManager() {
           </CardContent>
         </Card>
 
-        {/* Code Viewer */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        {/* Code Editor */}
+        <Card className="xl:col-span-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
               <i className="fas fa-code text-primary"></i>
-              Code Editor
+              Editor
               {hasUnsavedChanges && (
                 <Badge variant="secondary" className="ml-2">
                   <i className="fas fa-circle text-orange-500 text-xs mr-1"></i>
-                  Unsaved changes
+                  Unsaved
                 </Badge>
               )}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-sm">
               {selectedFile 
                 ? `Editing ${selectedFile.originalName}` 
-                : "Select a file from the tree to start editing"
+                : "Select a file to start editing"
               }
             </CardDescription>
           </CardHeader>
@@ -1526,6 +1948,29 @@ export default function FileManager() {
               isLoading={isContentLoading}
               isSaving={isUpdating}
               hasUnsavedChanges={hasUnsavedChanges}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Preview Pane */}
+        <Card className="xl:col-span-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <i className="fas fa-eye text-primary"></i>
+              Preview
+            </CardTitle>
+            <CardDescription className="text-sm">
+              {selectedFile 
+                ? `Preview of ${selectedFile.originalName}` 
+                : "File preview"
+              }
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <FilePreview
+              file={selectedFile}
+              content={fileContent}
+              isLoading={isContentLoading}
             />
           </CardContent>
         </Card>

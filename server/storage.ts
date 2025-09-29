@@ -286,13 +286,24 @@ export class MemStorage implements IStorage {
 
   // Message methods
   async getMessage(id: string): Promise<Message | undefined> {
-    return this.messages.get(id);
+    const message = this.messages.get(id);
+    if (!message) return undefined;
+    
+    // Parse metadata back to object if it's a string
+    return {
+      ...message,
+      metadata: typeof message.metadata === 'string' ? parseJSON(message.metadata) : message.metadata,
+    };
   }
 
   async getMessagesByConversationId(conversationId: string): Promise<Message[]> {
     return Array.from(this.messages.values())
       .filter(msg => msg.conversationId === conversationId)
-      .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
+      .map(message => ({
+        ...message,
+        metadata: typeof message.metadata === 'string' ? parseJSON(message.metadata) : message.metadata,
+      }));
   }
 
   async createMessage(insertMessage: InsertMessage): Promise<Message> {

@@ -1,0 +1,136 @@
+C:\Users\Nashin\Desktop\ai-assistant-studio-20250928>npm run dev
+
+> rest-express@1.0.0 dev
+> cross-env NODE_ENV=development tsx server/index.ts
+
+8:35:31 AM [express] serving on port 5000
+Browserslist: browsers data (caniuse-lite) is 11 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+8:35:55 AM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+8:35:59 AM [express] POST /api/login 200 in 108ms :: {"success":true,"user":{"id":"b3e26e50-32ae-42d…
+8:35:59 AM [express] GET /api/auth/user 200 in 3ms :: {"id":"b3e26e50-32ae-42da-a5f6-a29cf90ed0c5","…
+8:35:59 AM [express] GET /api/files 200 in 5ms :: [{"id":"9a0c3350-beb7-43f8-a8f5-77b303f086a6","use…
+8:36:05 AM [express] GET /api/conversations 200 in 3ms :: [{"id":"428b859a-50af-403c-bc64-69e74b02e9…
+8:36:15 AM [express] GET /api/auth/user 304 in 2ms :: {"id":"b3e26e50-32ae-42da-a5f6-a29cf90ed0c5","…
+8:36:15 AM [express] GET /api/llm-configurations 200 in 2ms :: [{"id":"5d6058fd-a527-4ba5-82f6-af832…
+8:36:15 AM [express] GET /api/user-preferences 200 in 5ms :: {"id":"174d1ac3-d239-40cf-af3a-2eb6f66b…
+8:36:15 AM [express] GET /api/files 304 in 6ms :: [{"id":"9a0c3350-beb7-43f8-a8f5-77b303f086a6","use…
+8:36:27 AM [express] DELETE /api/llm-configurations/5d6058fd-a527-4ba5-82f6-af832b0c62bd 200 in 23ms…
+8:36:27 AM [express] GET /api/llm-configurations 200 in 2ms :: []
+8:37:31 AM [express] POST /api/llm-configurations 200 in 13ms :: {"id":"1e60c020-691b-47f3-a4f7-0de8…
+8:37:31 AM [express] GET /api/llm-configurations 200 in 3ms :: [{"id":"1e60c020-691b-47f3-a4f7-0de80…
+8:37:34 AM [express] POST /api/llm/test-connection 200 in 23ms :: {"connected":true}
+8:37:36 AM [express] PUT /api/llm-configurations/1e60c020-691b-47f3-a4f7-0de80daf44a2 200 in 14ms ::…
+8:37:36 AM [express] GET /api/llm-configurations 200 in 2ms :: [{"id":"1e60c020-691b-47f3-a4f7-0de80…
+8:37:42 AM [express] GET /api/conversations 304 in 3ms :: [{"id":"428b859a-50af-403c-bc64-69e74b02e9…
+8:37:45 AM [express] GET /api/files 304 in 1ms :: [{"id":"9a0c3350-beb7-43f8-a8f5-77b303f086a6","use…
+8:37:46 AM [express] POST /api/conversations 200 in 13ms :: {"id":"01dd524c-94e2-403d-9a5f-fb049b729…
+8:37:46 AM [express] GET /api/conversations 200 in 2ms :: [{"id":"01dd524c-94e2-403d-9a5f-fb049b7296…
+Error creating message: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "object",
+    "path": [
+      "metadata"
+    ],
+    "message": "Expected string, received object"
+  }
+]
+    at get error (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:587:31)
+    at ZodObject.parse (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:663:22)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:163:40)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at isAuthenticated (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:238:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at strategy.pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\middleware\authenticate.js:355:9)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\strategies\session.js:120:12
+    at pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:352:31)
+    at deserialized (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:364:7)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:99:7) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'object',
+      path: [Array],
+      message: 'Expected string, received object'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'object',
+      path: [Array],
+      message: 'Expected string, received object'
+    }
+  ]
+}
+8:37:46 AM [express] POST /api/messages 500 in 7ms :: {"error":"Failed to create message"}
+8:37:46 AM [express] GET /api/conversations/01dd524c-94e2-403d-9a5f-fb049b7296f3/messages 200 in 3ms…
+Error creating message: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "object",
+    "path": [
+      "metadata"
+    ],
+    "message": "Expected string, received object"
+  }
+]
+    at get error (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:587:31)
+    at ZodObject.parse (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:663:22)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:163:40)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at isAuthenticated (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:238:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at strategy.pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\middleware\authenticate.js:355:9)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\strategies\session.js:120:12
+    at pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:352:31)
+    at deserialized (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:364:7)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:99:7) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'object',
+      path: [Array],
+      message: 'Expected string, received object'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'object',
+      path: [Array],
+      message: 'Expected string, received object'
+    }
+  ]
+}
+8:38:01 AM [express] POST /api/messages 500 in 3ms :: {"error":"Failed to create message"}
+GitHub integration not configured - GITHUB_PERSONAL_ACCESS_TOKEN missing
+8:38:09 AM [express] GET /api/github/repositories 304 in 3ms :: []
+8:38:15 AM [express] GET /api/files 304 in 1ms :: [{"id":"9a0c3350-beb7-43f8-a8f5-77b303f086a6","use…
+8:38:18 AM [express] POST /api/llm/test-connection 200 in 6ms :: {"connected":true}

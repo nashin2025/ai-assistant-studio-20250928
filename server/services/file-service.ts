@@ -39,8 +39,17 @@ export class FileService {
     content: Buffer,
     mimeType: string
   ): Promise<File> {
-    const filename = `${Date.now()}-${Math.random().toString(36).substring(2)}-${originalName}`;
+    // Sanitize filename to prevent path traversal
+    const safeName = path.basename(originalName).replace(/[^a-zA-Z0-9._-]/g, "_");
+    const filename = `${Date.now()}-${Math.random().toString(36).substring(2)}-${safeName}`;
     const filePath = path.join(this.uploadDir, filename);
+    
+    // Verify path is within upload directory
+    const resolved = path.resolve(filePath);
+    const uploadDirResolved = path.resolve(this.uploadDir);
+    if (!resolved.startsWith(uploadDirResolved + path.sep) && resolved !== uploadDirResolved) {
+      throw new Error("Invalid file path");
+    }
 
     try {
       await fs.writeFile(filePath, content);
@@ -52,7 +61,7 @@ export class FileService {
         mimeType,
         size: content.length,
         path: filePath,
-        analysis: await this.analyzeFile(content, originalName, mimeType),
+        analysis: JSON.stringify(await this.analyzeFile(content, originalName, mimeType)),
       };
 
       return await storage.createFile(insertFile);
@@ -238,5 +247,41 @@ export class FileService {
     ];
     
     return codeIndicators.some(pattern => pattern.test(content));
+  }
+
+  // Remove sensitive path information from file objects
+  sanitizeFileForResponse(file: File): Omit<File, 'path'> {
+    const { path: _path, ...safeFile } = file;
+    return safeFile;
+  }
+
+  async updateFileContent(fileId: string, content: Buffer): Promise<File> {
+    try {
+      const file = await storage.getFile(fileId);
+      if (!file) {
+        throw new Error("File not found");
+      }
+
+      // Write new content to the file
+      await fs.writeFile(file.path, content);
+      
+      // Update file analysis and size
+      const updatedAnalysis = await this.analyzeFile(content, file.originalName, file.mimeType);
+      
+      // Update file record in storage
+      const updatedFile = await storage.updateFile(fileId, {
+        size: content.length,
+        analysis: JSON.stringify(updatedAnalysis),
+      });
+      
+      if (!updatedFile) {
+        throw new Error("Failed to update file record");
+      }
+      
+      return updatedFile;
+    } catch (error) {
+      console.error("Error updating file content:", error);
+      throw new Error("Failed to update file content");
+    }
   }
 }

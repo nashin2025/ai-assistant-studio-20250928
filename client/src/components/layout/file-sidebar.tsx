@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFileUpload } from "@/hooks/use-file-upload";
+import { useToast } from "@/hooks/use-toast";
 import type { File as FileType } from "@shared/schema";
 
 interface TreeNode {
@@ -18,11 +20,41 @@ interface TreeNode {
 export default function FileSidebar() {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set([''])); // Root expanded by default
   const { getFileIcon } = useFileUpload();
+  const queryClient = useQueryClient();
+  const [, navigate] = useLocation();
+  const { toast } = useToast();
 
-  const { data: files = [], isLoading } = useQuery<FileType[]>({
+  const { data, isLoading, isFetching, error, refetch } = useQuery({
     queryKey: ["/api/files"],
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 5000, // Refresh every 5 seconds for real-time feel
+    refetchIntervalInBackground: true, // Continue polling when tab is not active
+    staleTime: 2000, // Data is considered stale after 2 seconds
   });
+
+  // Type-safe files array
+  const files: FileType[] = (data as FileType[]) || [];
+
+  // Handle errors manually since onError is not available in v5
+  if (error && !isLoading) {
+    console.error('File loading error:', error);
+  }
+
+  const handleRefresh = async () => {
+    try {
+      await refetch();
+      toast({
+        title: "Files refreshed",
+        description: "File list has been updated",
+      });
+    } catch (error) {
+      // Error already handled by onError callback
+    }
+  };
+
+  const handleNavigateToFileManager = (fileId?: string) => {
+    const url = fileId ? `/file-manager?file=${fileId}` : '/file-manager';
+    navigate(url);
+  };
 
   const toggleFolder = (path: string) => {
     setExpandedFolders(prev => {
@@ -141,10 +173,7 @@ export default function FileSidebar() {
         size="sm"
         className="w-full justify-start h-7 px-2 text-xs hover:bg-sidebar-accent group"
         style={indentStyle}
-        onClick={() => {
-          // Navigate to file manager with this file selected
-          window.location.href = `/file-manager?file=${file.id}`;
-        }}
+        onClick={() => handleNavigateToFileManager(file.id)}
       >
         <i className={`${getFileIcon(file.originalName, file.mimeType)} text-primary mr-2`}></i>
         <span className="truncate flex-1 text-left">{node.name}</span>
@@ -164,14 +193,20 @@ export default function FileSidebar() {
       {/* Header */}
       <div className="p-3 border-b border-sidebar-border">
         <div className="flex items-center justify-between">
-          <h3 className="font-medium text-sm text-sidebar-foreground">Files</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-medium text-sm text-sidebar-foreground">Files</h3>
+            {isFetching && !isLoading && (
+              <i className="fas fa-sync-alt text-xs text-muted-foreground animate-spin" title="Updating files..."></i>
+            )}
+          </div>
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="sm"
               className="h-6 w-6 p-0"
-              onClick={() => window.location.href = '/file-manager'}
+              onClick={() => handleNavigateToFileManager()}
               title="Open File Manager"
+              data-testid="button-open-file-manager"
             >
               <i className="fas fa-external-link-alt text-xs"></i>
             </Button>
@@ -179,8 +214,9 @@ export default function FileSidebar() {
               variant="ghost"
               size="sm"
               className="h-6 w-6 p-0"
-              onClick={() => window.location.reload()}
+              onClick={handleRefresh}
               title="Refresh Files"
+              data-testid="button-refresh-files"
             >
               <i className="fas fa-sync-alt text-xs"></i>
             </Button>
@@ -196,7 +232,22 @@ export default function FileSidebar() {
       {/* File Tree */}
       <ScrollArea className="flex-1">
         <div className="p-1">
-          {isLoading ? (
+          {error ? (
+            <div className="text-center py-8 px-4">
+              <i className="fas fa-exclamation-triangle text-2xl text-destructive mb-2"></i>
+              <p className="text-xs text-muted-foreground mb-2">Failed to load files</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs h-7"
+                onClick={handleRefresh}
+                data-testid="button-retry-files"
+              >
+                <i className="fas fa-redo mr-1"></i>
+                Retry
+              </Button>
+            </div>
+          ) : isLoading ? (
             <div className="flex items-center justify-center py-8">
               <i className="fas fa-spinner fa-spin text-muted-foreground"></i>
             </div>
@@ -208,7 +259,8 @@ export default function FileSidebar() {
                 variant="ghost"
                 size="sm"
                 className="text-xs mt-2 h-7"
-                onClick={() => window.location.href = '/file-manager'}
+                onClick={() => handleNavigateToFileManager()}
+                data-testid="button-add-files"
               >
                 <i className="fas fa-plus mr-1"></i>
                 Add files

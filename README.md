@@ -67,6 +67,7 @@ Before installing, ensure you have the following:
 ```bash
 git clone https://github.com/nashin2025/ai-assistant-studio-20250928.git
 cd ai-assistant-studio-20250928
+copy package.windows.json package.json
 ```
 
 #### 2. Install Dependencies
@@ -94,6 +95,11 @@ GOOGLE_API_KEY=your-google-api-key
 GOOGLE_CX=your-google-search-engine-id
 BING_API_KEY=your-bing-api-key
 # Note: DuckDuckGo search works without an API key
+```
+### 3.1 session_secret Gen
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 #### 4. Start the Application
