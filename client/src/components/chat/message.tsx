@@ -2,6 +2,9 @@ import { Message as MessageType } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { CodeBlock, detectLanguage } from "@/components/ui/code-block";
+import { SaveToFileDialog } from "@/components/ui/save-to-file-dialog";
+import { useSaveToFile } from "@/hooks/use-save-to-file";
 
 interface MessageProps {
   message: MessageType;
@@ -11,6 +14,18 @@ export default function Message({ message }: MessageProps) {
   const [copied, setCopied] = useState(false);
   const isUser = message.role === "user";
   const isAssistant = message.role === "assistant";
+  const saveToFile = useSaveToFile();
+  
+  // Parse metadata if it's a string
+  const metadata = typeof message.metadata === 'string' 
+    ? (() => {
+        try {
+          return JSON.parse(message.metadata);
+        } catch {
+          return null;
+        }
+      })()
+    : message.metadata;
 
   const handleCopy = async () => {
     try {
@@ -41,19 +56,21 @@ export default function Message({ message }: MessageProps) {
             "rounded-lg p-3",
             isUser ? "bg-secondary" : "bg-card border border-border"
           )}>
-            <div className="message-content text-sm" dangerouslySetInnerHTML={{ __html: formatMessageContent(message.content) }} />
+            <div className="message-content text-sm">
+              <MessageContent content={message.content} onSaveToFile={saveToFile.openSaveDialog} />
+            </div>
             
             {/* Metadata display for special content */}
-            {message.metadata && (
+            {metadata && (
               <div className="mt-3 space-y-2">
-                {message.metadata.searchResults && (
-                  <SearchResultsDisplay results={message.metadata.searchResults} />
+                {metadata.searchResults && (
+                  <SearchResultsDisplay results={metadata.searchResults} />
                 )}
-                {message.metadata.fileAnalysis && (
-                  <FileAnalysisDisplay analysis={message.metadata.fileAnalysis} />
+                {metadata.fileAnalysis && (
+                  <FileAnalysisDisplay analysis={metadata.fileAnalysis} />
                 )}
-                {message.metadata.codeAnalysis && (
-                  <CodeAnalysisDisplay analysis={message.metadata.codeAnalysis} />
+                {metadata.codeAnalysis && (
+                  <CodeAnalysisDisplay analysis={metadata.codeAnalysis} />
                 )}
               </div>
             )}
@@ -88,25 +105,106 @@ export default function Message({ message }: MessageProps) {
           </div>
         </div>
       </div>
+      
+      <SaveToFileDialog
+        isOpen={saveToFile.isOpen}
+        onClose={() => saveToFile.setIsOpen(false)}
+        onSave={saveToFile.saveToFile}
+        suggestedFilename={saveToFile.suggestedFilename}
+        isLoading={saveToFile.isLoading}
+      />
     </div>
   );
 }
 
-function formatMessageContent(content: string): string {
-  // Basic markdown-like formatting
+// Component to render message content with enhanced code blocks
+function MessageContent({ content, onSaveToFile }: { content: string; onSaveToFile: (code: string, filename?: string) => void }) {
+  const parts = parseMessageContent(content);
+  
+  return (
+    <div className="space-y-3">
+      {parts.map((part, index) => {
+        if (part.type === 'code') {
+          const language = part.language || detectLanguage(part.content);
+          return (
+            <CodeBlock
+              key={index}
+              code={part.content}
+              language={language}
+              onSaveToFile={onSaveToFile}
+              className="my-3"
+            />
+          );
+        } else {
+          return (
+            <div
+              key={index}
+              dangerouslySetInnerHTML={{ __html: formatTextContent(part.content) }}
+            />
+          );
+        }
+      })}
+    </div>
+  );
+}
+
+// Parse message content into code blocks and text sections
+function parseMessageContent(content: string) {
+  const parts: Array<{ type: 'text' | 'code'; content: string; language?: string }> = [];
+  const codeBlockRegex = /```(\w*)?\n?([\s\S]*?)```/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = codeBlockRegex.exec(content)) !== null) {
+    // Add text before code block
+    if (match.index > lastIndex) {
+      const textContent = content.slice(lastIndex, match.index).trim();
+      if (textContent) {
+        parts.push({ type: 'text', content: textContent });
+      }
+    }
+
+    // Add code block
+    const language = match[1] || '';
+    const code = match[2].trim();
+    if (code) {
+      parts.push({ type: 'code', content: code, language });
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Add remaining text
+  if (lastIndex < content.length) {
+    const remainingText = content.slice(lastIndex).trim();
+    if (remainingText) {
+      parts.push({ type: 'text', content: remainingText });
+    }
+  }
+
+  // If no code blocks found, return the entire content as text
+  if (parts.length === 0) {
+    parts.push({ type: 'text', content });
+  }
+
+  return parts;
+}
+
+// Format text content (non-code parts)
+function formatTextContent(content: string): string {
   return content
-    .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/`([^`]+)`/g, '<code class="bg-muted px-1 py-0.5 rounded text-sm font-mono">$1</code>')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/\n/g, '<br>');
 }
 
-function formatTimestamp(timestamp: Date | string | null | undefined): string {
+function formatTimestamp(timestamp: number | Date | string | null | undefined): string {
   if (!timestamp) return "";
   
-  // Convert string timestamps to Date objects
-  const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
+  // Convert timestamp to Date object
+  const date = typeof timestamp === 'number' ? new Date(timestamp) :
+               typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
   
   const now = new Date();
   const diff = now.getTime() - date.getTime();
