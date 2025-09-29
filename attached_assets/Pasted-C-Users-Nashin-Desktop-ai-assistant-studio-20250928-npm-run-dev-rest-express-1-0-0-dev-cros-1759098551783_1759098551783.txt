@@ -1,0 +1,83 @@
+C:\Users\Nashin\Desktop\ai-assistant-studio-20250928>npm run dev
+
+> rest-express@1.0.0 dev
+> cross-env NODE_ENV=development tsx server/index.ts
+
+SQLite database path: C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\data\ai-assistant-studio.db
+Creating default admin user...
+Default admin user created:
+Email: admin@localhost
+Password: admin123
+Please change this password after first login!
+express-session deprecated req.secret; provide secret option file:\C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:1:604
+Initialized template: React TypeScript App
+Initialized template: Express API Server
+Initialized template: Next.js Full Stack
+Initialized template: Python FastAPI Backend
+3:27:20 AM [express] serving on port 5000
+Error: secret option required for sessions
+    at session (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express-session\index.js:204:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\index.ts:44:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
+Error: secret option required for sessions
+    at session (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express-session\index.js:204:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\index.ts:44:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
+Error: secret option required for sessions
+    at session (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express-session\index.js:204:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\index.ts:44:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
+Error: secret option required for sessions
+    at session (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express-session\index.js:204:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\index.ts:44:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
+Error: secret option required for sessions
+    at session (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express-session\index.js:204:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\index.ts:44:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
+Error: secret option required for sessions
+    at session (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express-session\index.js:204:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\index.ts:44:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:286:9
