@@ -33,6 +33,11 @@ const navigation = [
     icon: "fas fa-file-alt",
   },
   {
+    name: "File Manager",
+    href: "/file-manager",
+    icon: "fas fa-folder-open",
+  },
+  {
     name: "Integrations",
     href: "/integrations",
     icon: "fas fa-plug",
