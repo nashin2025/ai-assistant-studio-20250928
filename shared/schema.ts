@@ -185,6 +185,9 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   role: true,
   content: true,
   metadata: true,
+}).extend({
+  // Allow metadata to be either string (JSON) or object (will be stringified)
+  metadata: z.union([z.string(), z.object({}).passthrough()]).optional(),
 });
 
 export const insertProjectSchema = createInsertSchema(projects).pick({
