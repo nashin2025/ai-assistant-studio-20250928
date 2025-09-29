@@ -610,7 +610,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/projects", isAuthenticated, async (req, res) => {
     try {
       const userId = getUserId(req); // Server-derived userId
-      const data = insertProjectSchema.parse({ ...req.body, userId });
+      
+      // Transform metadata object to JSON string if it exists
+      const requestData = { ...req.body, userId };
+      if (requestData.metadata && typeof requestData.metadata === 'object') {
+        requestData.metadata = JSON.stringify(requestData.metadata);
+      }
+      
+      const data = insertProjectSchema.parse(requestData);
       const project = await storage.createProject(data);
       res.json(project);
     } catch (error) {
@@ -713,11 +720,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const latestVersion = await storage.getLatestProjectPlanVersion(projectId);
       const nextVersionNumber = (latestVersion?.version || 0) + 1;
       
-      const data = insertProjectPlanVersionSchema.parse({
-        ...req.body,
-        projectId,
-        version: nextVersionNumber // Server assigns version number
+      // Transform array fields to JSON strings for database storage
+      const requestData = { ...req.body, projectId, version: nextVersionNumber };
+      
+      // Convert array fields to JSON strings if they exist
+      const arrayFields = ['goals', 'requirements', 'techStack', 'resources', 'risks', 'architecture', 'timeline'];
+      arrayFields.forEach(field => {
+        if (requestData[field] && Array.isArray(requestData[field])) {
+          requestData[field] = JSON.stringify(requestData[field]);
+        }
       });
+      
+      const data = insertProjectPlanVersionSchema.parse(requestData);
       
       const version = await storage.createProjectPlanVersion(data);
       res.json(version);
@@ -757,7 +771,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { versionId } = req.params;
       const userId = getUserId(req);
-      const updates = insertProjectPlanVersionSchema.partial().parse(req.body);
+      // Transform array fields to JSON strings for database storage
+      const requestData = { ...req.body };
+      const arrayFields = ['goals', 'requirements', 'techStack', 'resources', 'risks', 'architecture', 'timeline'];
+      arrayFields.forEach(field => {
+        if (requestData[field] && Array.isArray(requestData[field])) {
+          requestData[field] = JSON.stringify(requestData[field]);
+        }
+      });
+      
+      const updates = insertProjectPlanVersionSchema.partial().parse(requestData);
       
       // Verify project ownership before updating version
       const existingVersion = await storage.getProjectPlanVersion(versionId);
