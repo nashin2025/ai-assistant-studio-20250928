@@ -4,34 +4,28 @@ import Message from "./message";
 import ChatInput from "./chat-input";
 import FileUploadZone from "./file-upload-zone";
 import { Card } from "@/components/ui/card";
-import ContextPanel from "@/components/tools/context-panel";
+import type { Message as MessageType } from "@shared/schema";
 
 export default function ChatInterface() {
   const { messages, isLoading, sendMessage, currentConversation } = useChat();
 
   return (
-    <div className="flex-1 flex overflow-hidden">
-      {/* Chat Messages Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4" data-testid="messages-container">
-          {messages.length === 0 ? (
-            <WelcomeMessage />
-          ) : (
-            messages.map((message) => (
-              <Message key={message.id} message={message} />
-            ))
-          )}
-          
-          {isLoading && <LoadingMessage />}
-        </div>
-
-        {/* Chat Input */}
-        <ChatInput onSendMessage={sendMessage} isLoading={isLoading} />
+    <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4" data-testid="messages-container">
+        {messages.length === 0 ? (
+          <WelcomeMessage />
+        ) : (
+          messages.map((message: MessageType) => (
+            <Message key={message.id} message={message} />
+          ))
+        )}
+        
+        {isLoading && <LoadingMessage />}
       </div>
 
-      {/* Right Sidebar - Context Panel */}
-      <ContextPanel className="hidden xl:flex" />
+      {/* Chat Input */}
+      <ChatInput onSendMessage={sendMessage} isLoading={isLoading} />
     </div>
   );
 }
