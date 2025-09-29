@@ -1,0 +1,156 @@
+C:\Users\Nashin\Desktop\ai-assistant-studio-20250928>npm run dev
+
+> rest-express@1.0.0 dev
+> cross-env NODE_ENV=development tsx server/index.ts
+
+4:36:28 AM [express] serving on port 5000
+4:36:34 AM [express] GET /api/auth/user 401 in 3ms :: {"message":"Unauthorized"}
+4:36:38 AM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+4:36:45 AM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+4:37:07 AM [express] POST /api/login 200 in 80ms :: {"success":true,"user":{"id":"ad87509c-3f63-48b6…
+4:37:08 AM [express] GET /api/auth/user 304 in 2ms :: {"id":"ad87509c-3f63-48b6-8fbd-01d4653b335e","…
+4:37:26 AM [express] GET /api/search-engines 304 in 11ms :: []
+4:37:26 AM [express] GET /api/llm-configurations 304 in 10ms :: []
+4:37:26 AM [express] GET /api/files 304 in 9ms :: []
+4:37:26 AM [express] GET /api/conversations 304 in 10ms :: []
+4:38:20 AM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+4:38:30 AM [express] POST /api/login 200 in 76ms :: {"success":true,"user":{"id":"ad87509c-3f63-48b6…
+4:38:31 AM [express] GET /api/auth/user 200 in 3ms :: {"id":"ad87509c-3f63-48b6-8fbd-01d4653b335e","…
+4:38:41 AM [express] GET /api/llm-configurations 200 in 5ms :: []
+4:38:41 AM [express] GET /api/search-engines 200 in 8ms :: []
+4:38:41 AM [express] GET /api/files 200 in 8ms :: []
+4:38:41 AM [express] GET /api/conversations 200 in 8ms :: []
+4:39:23 AM [express] GET /api/auth/user 304 in 2ms :: {"id":"ad87509c-3f63-48b6-8fbd-01d4653b335e","…
+4:39:23 AM [express] GET /api/user-preferences 200 in 2ms :: {"id":"3f2b0216-5d59-4969-802c-5111eff6…
+4:39:23 AM [express] GET /api/llm-configurations 304 in 2ms :: []
+4:40:16 AM [express] POST /api/llm-configurations 200 in 14ms :: {"id":"4549380a-4e5f-4b40-ae0a-0204…
+4:40:16 AM [express] GET /api/llm-configurations 200 in 2ms :: [{"id":"4549380a-4e5f-4b40-ae0a-0204e…
+4:40:20 AM [express] POST /api/llm/test-connection 200 in 33ms :: {"connected":true}
+4:40:37 AM [express] GET /api/search-engines 304 in 2ms :: []
+4:40:37 AM [express] GET /api/files 304 in 4ms :: []
+4:40:37 AM [express] GET /api/conversations 304 in 5ms :: []
+Error fetching GitHub repositories: Error: GITHUB_PERSONAL_ACCESS_TOKEN environment variable is required for GitHub integration
+    at getLocalGitHubClient (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localGitHubClient.ts:10:11)
+    at GitHubService.getUserRepositories (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\github-service.ts:42:29)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:811:48)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at isAuthenticated (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:238:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at strategy.pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\middleware\authenticate.js:355:9)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\strategies\session.js:120:12
+    at pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:352:31)
+    at deserialized (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:364:7)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:99:7)
+Error fetching GitHub repositories: Error: Failed to fetch repositories from GitHub
+    at GitHubService.getUserRepositories (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\github-service.ts:62:13)
+    at async <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:811:28)
+4:40:45 AM [express] GET /api/projects 200 in 8ms :: []
+4:40:45 AM [express] GET /api/github/repositories 500 in 9ms :: {"error":"Failed to fetch repositori…
+4:40:52 AM [express] GET /api/project-templates 200 in 2ms :: [{"id":"aba4e6e5-abe1-4f72-b5e3-3138ad…
+4:40:58 AM [express] GET /api/project-templates 200 in 2ms :: [{"id":"3e411732-34da-4ef7-8d38-e646d1…
+4:40:59 AM [express] GET /api/project-templates 200 in 2ms :: [{"id":"aba4e6e5-abe1-4f72-b5e3-3138ad…
+4:41:01 AM [express] GET /api/project-templates 200 in 1ms :: []
+4:41:06 AM [express] GET /api/project-templates 200 in 2ms :: []
+4:41:07 AM [express] GET /api/project-templates 200 in 2ms :: []
+4:41:08 AM [express] GET /api/project-templates 200 in 1ms :: []
+Error generating project from template: TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received undefined
+    at Object.normalize (node:path:357:5)
+    at sanitizeFilePath (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:10:27)
+    at ProjectGeneratorService.createProjectFiles (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:113:24)
+    at async ProjectGeneratorService.generateProjectFromTemplate (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:83:5)
+    at async <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:943:22) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+4:41:50 AM [express] POST /api/project-templates/3e411732-34da-4ef7-8d38-e646d1f5200f/generate 500 i…
+Error generating project from template: TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received undefined
+    at Object.normalize (node:path:357:5)
+    at sanitizeFilePath (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:10:27)
+    at ProjectGeneratorService.createProjectFiles (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:113:24)
+    at async ProjectGeneratorService.generateProjectFromTemplate (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:83:5)
+    at async <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:943:22) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+4:41:58 AM [express] POST /api/project-templates/3e411732-34da-4ef7-8d38-e646d1f5200f/generate 500 i…
+4:43:24 AM [express] GET /api/files 200 in 2ms :: []
+4:43:47 AM [express] POST /api/files/upload 200 in 18ms :: {"id":"a0bced94-2fc8-4e1f-861a-69dfd2eff4…
+4:43:47 AM [express] GET /api/files 200 in 2ms :: [{"id":"a0bced94-2fc8-4e1f-861a-69dfd2eff4bf","use…
+4:43:47 AM [express] GET /api/files 304 in 1ms :: [{"id":"a0bced94-2fc8-4e1f-861a-69dfd2eff4bf","use…
+4:44:28 AM [express] GET /api/files 200 in 1ms :: [{"id":"a0bced94-2fc8-4e1f-861a-69dfd2eff4bf","use…
+Error creating project: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "object",
+    "path": [
+      "metadata"
+    ],
+    "message": "Expected string, received object"
+  }
+]
+    at get error (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:587:31)
+    at ZodObject.parse (file:///C:/Users/Nashin/Desktop/ai-assistant-studio-20250928/node_modules/zod/lib/index.mjs:663:22)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:611:40)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at isAuthenticated (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:238:12)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\express\lib\router\index.js:280:10)
+    at strategy.pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\middleware\authenticate.js:355:9)
+    at C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\strategies\session.js:120:12
+    at pass (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:352:31)
+    at deserialized (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\node_modules\passport\lib\authenticator.js:364:7)
+    at <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\localAuth.ts:99:7) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'object',
+      path: [Array],
+      message: 'Expected string, received object'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'object',
+      path: [Array],
+      message: 'Expected string, received object'
+    }
+  ]
+}
+4:44:56 AM [express] POST /api/projects 500 in 4ms :: {"error":"Failed to create project"}
+Error generating project from template: TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received undefined
+    at Object.normalize (node:path:357:5)
+    at sanitizeFilePath (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:10:27)
+    at ProjectGeneratorService.createProjectFiles (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:113:24)
+    at async ProjectGeneratorService.generateProjectFromTemplate (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:83:5)
+    at async <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:943:22) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+4:45:07 AM [express] POST /api/project-templates/aba4e6e5-abe1-4f72-b5e3-3138adcc8271/generate 500 i…
+Error generating project from template: TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received undefined
+    at Object.normalize (node:path:357:5)
+    at sanitizeFilePath (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:10:27)
+    at ProjectGeneratorService.createProjectFiles (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:113:24)
+    at async ProjectGeneratorService.generateProjectFromTemplate (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\services\project-generator.ts:83:5)
+    at async <anonymous> (C:\Users\Nashin\Desktop\ai-assistant-studio-20250928\server\routes.ts:943:22) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+4:45:13 AM [express] POST /api/project-templates/64d61933-e1a4-430f-9847-c30869e37fe7/generate 500 i…
+4:45:31 AM [express] GET /api/auth/user 304 in 2ms :: {"id":"ad87509c-3f63-48b6-8fbd-01d4653b335e","…
+4:45:31 AM [express] GET /api/files 304 in 2ms :: [{"id":"a0bced94-2fc8-4e1f-861a-69dfd2eff4bf","use…
