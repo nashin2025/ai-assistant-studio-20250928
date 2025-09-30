@@ -239,8 +239,8 @@ export const isAuthenticated: RequestHandler = async (req: any, res, next) => {
     return next();
   }
   
-  // For local development with SQLite (no DATABASE_URL), auto-login with default user
-  if (!process.env.DATABASE_URL) {
+  // For development mode (NODE_ENV=development), auto-login with default user
+  if (process.env.NODE_ENV === 'development') {
     try {
       // Get or create default user
       let defaultUser = await storage.getUserByEmail('admin@localhost');
@@ -258,7 +258,7 @@ export const isAuthenticated: RequestHandler = async (req: any, res, next) => {
           passwordHash
         });
         
-        console.log('✅ Auto-created default user for local development');
+        console.log('✅ Auto-created default user for development');
         console.log('   Email: admin@localhost');
         console.log(`   Password: ${defaultPassword}`);
       }
@@ -278,7 +278,7 @@ export const isAuthenticated: RequestHandler = async (req: any, res, next) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
   } else {
-    // In production (with DATABASE_URL), require proper authentication
+    // In production, require proper authentication
     res.status(401).json({ message: "Unauthorized" });
   }
 };
