@@ -618,11 +618,11 @@ class PostgreSQLStorage implements IStorage {
   async getFilesByProjectId(projectId: string): Promise<File[]> {
     const result = await this.db.select().from(files)
       .where(eq(files.projectId, projectId))
-      .orderBy(desc(files.updatedAt));
+      .orderBy(desc(files.createdAt));
     
     return result.map(file => ({
       ...file,
-      metadata: this.parseJSON(file.metadata as string)
+      analysis: this.parseJSON(file.analysis as string)
     }));
   }
 
@@ -689,7 +689,7 @@ class PostgreSQLStorage implements IStorage {
   async getLLMConfigurationsByUserId(userId: string): Promise<LLMConfiguration[]> {
     const result = await this.db.select().from(llmConfigurations)
       .where(eq(llmConfigurations.userId, userId))
-      .orderBy(desc(llmConfigurations.updatedAt));
+      .orderBy(desc(llmConfigurations.createdAt));
     
     return result.map(config => ({
       ...config,
@@ -762,7 +762,7 @@ class PostgreSQLStorage implements IStorage {
   async getSearchEnginesByUserId(userId: string): Promise<SearchEngine[]> {
     const result = await this.db.select().from(searchEngines)
       .where(eq(searchEngines.userId, userId))
-      .orderBy(desc(searchEngines.updatedAt));
+      .orderBy(desc(searchEngines.createdAt));
     
     return result.map(engine => ({
       ...engine,
