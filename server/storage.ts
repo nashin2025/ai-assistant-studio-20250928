@@ -848,7 +848,10 @@ class PostgreSQLStorage implements IStorage {
     
     return {
       ...result[0],
-      metadata: this.parseJSON(result[0].metadata as string)
+      techStack: this.parseJSON(result[0].techStack as string),
+      files: this.parseJSON(result[0].files as string),
+      dependencies: this.parseJSON(result[0].dependencies as string),
+      tags: this.parseJSON(result[0].tags as string)
     };
   }
 
@@ -858,8 +861,10 @@ class PostgreSQLStorage implements IStorage {
     
     return result.map(template => ({
       ...template,
-      structure: this.parseJSON(template.structure as string),
-      metadata: this.parseJSON(template.metadata as string)
+      techStack: this.parseJSON(template.techStack as string),
+      files: this.parseJSON(template.files as string),
+      dependencies: this.parseJSON(template.dependencies as string),
+      tags: this.parseJSON(template.tags as string)
     }));
   }
 
@@ -873,10 +878,16 @@ class PostgreSQLStorage implements IStorage {
     const newTemplate = {
       id,
       name: insertTemplate.name,
-      description: insertTemplate.description || null,
-      type: insertTemplate.type,
-      structure: insertTemplate.structure ? this.serializeJSON(insertTemplate.structure) : null,
-      metadata: insertTemplate.metadata ? this.serializeJSON(insertTemplate.metadata) : null,
+      description: insertTemplate.description,
+      category: insertTemplate.category,
+      techStack: insertTemplate.techStack,
+      files: insertTemplate.files,
+      dependencies: insertTemplate.dependencies || null,
+      instructions: insertTemplate.instructions || null,
+      difficulty: insertTemplate.difficulty || 'beginner',
+      estimatedTime: insertTemplate.estimatedTime || null,
+      tags: insertTemplate.tags || null,
+      isPublic: insertTemplate.isPublic ?? true,
       createdAt: now,
       updatedAt: now
     };
@@ -884,16 +895,20 @@ class PostgreSQLStorage implements IStorage {
     const result = await this.db.insert(projectTemplates).values(newTemplate).returning();
     return {
       ...result[0],
-      structure: this.parseJSON(result[0].structure as string),
-      metadata: this.parseJSON(result[0].metadata as string)
+      techStack: this.parseJSON(result[0].techStack as string),
+      files: this.parseJSON(result[0].files as string),
+      dependencies: this.parseJSON(result[0].dependencies as string),
+      tags: this.parseJSON(result[0].tags as string)
     };
   }
 
   async updateProjectTemplate(id: string, updates: Partial<ProjectTemplate>): Promise<ProjectTemplate | undefined> {
     const updated = {
       ...updates,
-      structure: updates.structure ? this.serializeJSON(updates.structure) : undefined,
-      metadata: updates.metadata ? this.serializeJSON(updates.metadata) : undefined,
+      techStack: updates.techStack ? this.serializeJSON(updates.techStack) : undefined,
+      files: updates.files ? this.serializeJSON(updates.files) : undefined,
+      dependencies: updates.dependencies ? this.serializeJSON(updates.dependencies) : undefined,
+      tags: updates.tags ? this.serializeJSON(updates.tags) : undefined,
       updatedAt: Date.now()
     };
     
@@ -906,8 +921,10 @@ class PostgreSQLStorage implements IStorage {
     
     return {
       ...result[0],
-      structure: this.parseJSON(result[0].structure as string),
-      metadata: this.parseJSON(result[0].metadata as string)
+      techStack: this.parseJSON(result[0].techStack as string),
+      files: this.parseJSON(result[0].files as string),
+      dependencies: this.parseJSON(result[0].dependencies as string),
+      tags: this.parseJSON(result[0].tags as string)
     };
   }
 
