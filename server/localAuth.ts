@@ -233,9 +233,52 @@ async function createDefaultUserIfNeeded() {
   }
 }
 
-export const isAuthenticated: RequestHandler = (req, res, next) => {
+export const isAuthenticated: RequestHandler = async (req: any, res, next) => {
+  // Check if user is already authenticated
   if (req.isAuthenticated()) {
     return next();
   }
-  res.status(401).json({ message: "Unauthorized" });
+  
+  // For local development with SQLite (no DATABASE_URL), auto-login with default user
+  if (!process.env.DATABASE_URL) {
+    try {
+      // Get or create default user
+      let defaultUser = await storage.getUserByEmail('admin@localhost');
+      
+      if (!defaultUser) {
+        // Create default user if it doesn't exist
+        const defaultPassword = process.env.DEFAULT_ADMIN_PASSWORD || 'admin123';
+        const passwordHash = await bcrypt.hash(defaultPassword, 10);
+        
+        defaultUser = await storage.upsertUser({
+          id: crypto.randomUUID(),
+          email: 'admin@localhost',
+          firstName: 'Admin',
+          lastName: 'User',
+          passwordHash
+        });
+        
+        console.log('✅ Auto-created default user for local development');
+        console.log('   Email: admin@localhost');
+        console.log(`   Password: ${defaultPassword}`);
+      }
+      
+      // Auto-login the user
+      req.login(defaultUser, (err) => {
+        if (err) {
+          console.error('Auto-login failed:', err);
+          return res.status(401).json({ message: "Unauthorized" });
+        }
+        // Set user in request
+        req.user = defaultUser;
+        return next();
+      });
+    } catch (error) {
+      console.error('Error in auto-authentication:', error);
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+  } else {
+    // In production (with DATABASE_URL), require proper authentication
+    res.status(401).json({ message: "Unauthorized" });
+  }
 };
