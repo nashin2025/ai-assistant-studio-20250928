@@ -1,7 +1,11 @@
 import { randomUUID } from 'crypto';
 import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
+import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js';
+import { drizzle as drizzleSQLite } from 'drizzle-orm/better-sqlite3';
+import Database from 'better-sqlite3';
 import { eq, desc, and } from 'drizzle-orm';
+import { mkdir } from 'fs';
+import { dirname } from 'path';
 import {
   users,
   conversations,
@@ -103,22 +107,47 @@ export interface IStorage {
   getProjectPlanVersionHistory(projectId: string): Promise<ProjectPlanVersion[]>;
 }
 
-// PostgreSQL Storage implementation
+// Hybrid Storage implementation (PostgreSQL or SQLite)
 class PostgreSQLStorage implements IStorage {
   private db: any;
+  private dbType: 'postgres' | 'sqlite';
 
   constructor() {
-    this.initializePostgreSQL();
+    this.dbType = process.env.DATABASE_URL ? 'postgres' : 'sqlite';
+    this.initializeDatabase();
   }
 
-  private initializePostgreSQL() {
+  private initializeDatabase() {
     const databaseUrl = process.env.DATABASE_URL;
-    if (!databaseUrl) {
-      throw new Error('DATABASE_URL is required for PostgreSQL storage');
+    
+    if (databaseUrl) {
+      // Use PostgreSQL for Replit/production
+      console.log('Initializing PostgreSQL database...');
+      const client = postgres(databaseUrl);
+      this.db = drizzlePostgres(client);
+    } else {
+      // Use SQLite for local development
+      console.log('DATABASE_URL not found. Using SQLite for local development...');
+      const dbPath = './data/ai-assistant-studio.db';
+      
+      // Ensure data directory exists
+      try {
+        mkdir('./data', { recursive: true }, (err) => {
+          if (err && err.code !== 'EEXIST') {
+            console.error('Error creating data directory:', err);
+          }
+        });
+      } catch (err) {
+        // Directory might already exist, ignore
+      }
+      
+      const sqlite = new Database(dbPath);
+      this.db = drizzleSQLite(sqlite);
+      
+      // Enable WAL mode for better concurrency
+      sqlite.pragma('journal_mode = WAL');
     }
     
-    const client = postgres(databaseUrl);
-    this.db = drizzle(client);
     this.initializeDefaults();
   }
 
