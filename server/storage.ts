@@ -607,11 +607,11 @@ class PostgreSQLStorage implements IStorage {
   async getFilesByUserId(userId: string): Promise<File[]> {
     const result = await this.db.select().from(files)
       .where(eq(files.userId, userId))
-      .orderBy(desc(files.updatedAt));
+      .orderBy(desc(files.createdAt));
     
     return result.map(file => ({
       ...file,
-      metadata: this.parseJSON(file.metadata as string)
+      analysis: this.parseJSON(file.analysis as string)
     }));
   }
 
