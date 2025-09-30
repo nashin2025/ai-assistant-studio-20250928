@@ -146,9 +146,155 @@ class PostgreSQLStorage implements IStorage {
       
       // Enable WAL mode for better concurrency
       sqlite.pragma('journal_mode = WAL');
+      
+      // Create tables if they don't exist
+      this.createSQLiteTables(sqlite);
     }
     
     this.initializeDefaults();
+  }
+
+  private createSQLiteTables(sqlite: Database) {
+    // Create all necessary tables for SQLite
+    sqlite.exec(`
+      CREATE TABLE IF NOT EXISTS sessions (
+        sid TEXT PRIMARY KEY,
+        sess TEXT NOT NULL,
+        expire INTEGER NOT NULL
+      );
+
+      CREATE INDEX IF NOT EXISTS IDX_session_expire ON sessions(expire);
+
+      CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        email TEXT UNIQUE,
+        first_name TEXT,
+        last_name TEXT,
+        profile_image_url TEXT,
+        password_hash TEXT,
+        username TEXT UNIQUE,
+        password TEXT,
+        created_at INTEGER,
+        updated_at INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS conversations (
+        id TEXT PRIMARY KEY,
+        user_id TEXT REFERENCES users(id),
+        title TEXT NOT NULL,
+        created_at INTEGER,
+        updated_at INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS messages (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT REFERENCES conversations(id),
+        role TEXT NOT NULL,
+        content TEXT NOT NULL,
+        metadata TEXT,
+        created_at INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS projects (
+        id TEXT PRIMARY KEY,
+        user_id TEXT REFERENCES users(id),
+        name TEXT NOT NULL,
+        description TEXT,
+        github_url TEXT,
+        status TEXT DEFAULT 'active',
+        metadata TEXT,
+        created_at INTEGER,
+        updated_at INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS files (
+        id TEXT PRIMARY KEY,
+        user_id TEXT REFERENCES users(id),
+        project_id TEXT REFERENCES projects(id),
+        filename TEXT NOT NULL,
+        original_name TEXT NOT NULL,
+        mime_type TEXT NOT NULL,
+        size INTEGER NOT NULL,
+        path TEXT NOT NULL,
+        analysis TEXT,
+        created_at INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS llm_configurations (
+        id TEXT PRIMARY KEY,
+        user_id TEXT REFERENCES users(id),
+        name TEXT NOT NULL,
+        endpoint TEXT NOT NULL,
+        model TEXT NOT NULL,
+        temperature INTEGER DEFAULT 70,
+        max_tokens INTEGER DEFAULT 2048,
+        is_default INTEGER DEFAULT 0,
+        created_at INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS search_engines (
+        id TEXT PRIMARY KEY,
+        user_id TEXT REFERENCES users(id),
+        name TEXT NOT NULL,
+        enabled INTEGER DEFAULT 1,
+        api_key TEXT,
+        created_at INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS user_preferences (
+        id TEXT PRIMARY KEY,
+        user_id TEXT REFERENCES users(id),
+        theme TEXT DEFAULT 'dark',
+        compact_mode INTEGER DEFAULT 0,
+        animations INTEGER DEFAULT 1,
+        font_size TEXT DEFAULT 'medium',
+        code_font TEXT DEFAULT 'jetbrains',
+        max_concurrent_requests INTEGER DEFAULT 5,
+        cache_duration INTEGER DEFAULT 30,
+        auto_save_conversations INTEGER DEFAULT 1,
+        analytics_collection INTEGER DEFAULT 0,
+        created_at INTEGER,
+        updated_at INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS project_templates (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT NOT NULL,
+        category TEXT NOT NULL,
+        difficulty TEXT DEFAULT 'intermediate',
+        estimated_time TEXT DEFAULT '2-4 hours',
+        tech_stack TEXT NOT NULL,
+        dependencies TEXT,
+        files TEXT NOT NULL,
+        instructions TEXT,
+        tags TEXT,
+        is_public INTEGER DEFAULT 1,
+        created_at INTEGER,
+        updated_at INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS project_plan_versions (
+        id TEXT PRIMARY KEY,
+        project_id TEXT REFERENCES projects(id),
+        version INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT,
+        goals TEXT,
+        requirements TEXT,
+        architecture TEXT,
+        tech_stack TEXT,
+        timeline TEXT,
+        resources TEXT,
+        risks TEXT,
+        notes TEXT,
+        change_log TEXT,
+        created_at INTEGER,
+        updated_at INTEGER
+      );
+    `);
+    
+    console.log('✅ SQLite tables created successfully');
   }
 
   private async initializeDefaults() {
