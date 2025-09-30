@@ -16,6 +16,7 @@ import {
   llmConfigurations,
   projectTemplates,
   projectPlanVersions,
+  userPreferences,
   type User,
   type Conversation,
   type Message,
@@ -25,6 +26,7 @@ import {
   type LLMConfiguration,
   type ProjectTemplate,
   type ProjectPlanVersion,
+  type UserPreferences,
   type InsertUser,
   type InsertConversation,
   type InsertMessage,
@@ -34,6 +36,7 @@ import {
   type InsertLLMConfiguration,
   type InsertProjectTemplate,
   type InsertProjectPlanVersion,
+  type InsertUserPreferences,
   type UpsertUser
 } from '@shared/schema';
 
@@ -105,6 +108,11 @@ export interface IStorage {
   updateProjectPlanVersion(id: string, updates: Partial<ProjectPlanVersion>): Promise<ProjectPlanVersion | undefined>;
   deleteProjectPlanVersion(id: string): Promise<boolean>;
   getProjectPlanVersionHistory(projectId: string): Promise<ProjectPlanVersion[]>;
+
+  // User Preferences methods
+  getUserPreferences(userId: string): Promise<UserPreferences | undefined>;
+  createUserPreferences(insertPreferences: InsertUserPreferences): Promise<UserPreferences>;
+  updateUserPreferences(userId: string, updates: Partial<UserPreferences>): Promise<UserPreferences | undefined>;
 }
 
 // Hybrid Storage implementation (PostgreSQL or SQLite)
@@ -289,6 +297,22 @@ class PostgreSQLStorage implements IStorage {
         risks TEXT,
         notes TEXT,
         change_log TEXT,
+        created_at INTEGER,
+        updated_at INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS user_preferences (
+        id TEXT PRIMARY KEY,
+        user_id TEXT REFERENCES users(id),
+        theme TEXT DEFAULT 'dark',
+        compact_mode INTEGER DEFAULT 0,
+        animations INTEGER DEFAULT 1,
+        font_size TEXT DEFAULT 'medium',
+        code_font TEXT DEFAULT 'jetbrains',
+        max_concurrent_requests INTEGER DEFAULT 5,
+        cache_duration INTEGER DEFAULT 30,
+        auto_save_conversations INTEGER DEFAULT 1,
+        analytics_collection INTEGER DEFAULT 0,
         created_at INTEGER,
         updated_at INTEGER
       );
@@ -1029,6 +1053,49 @@ class PostgreSQLStorage implements IStorage {
 
   async getProjectPlanVersionHistory(projectId: string): Promise<ProjectPlanVersion[]> {
     return this.getProjectPlanVersionsByProjectId(projectId);
+  }
+
+  // User Preferences methods
+  async getUserPreferences(userId: string): Promise<UserPreferences | undefined> {
+    const result = await this.db.select().from(userPreferences).where(eq(userPreferences.userId, userId)).limit(1);
+    return result[0] || undefined;
+  }
+
+  async createUserPreferences(insertPreferences: InsertUserPreferences): Promise<UserPreferences> {
+    const id = randomUUID();
+    const now = Date.now();
+    const newPreferences = {
+      id,
+      userId: insertPreferences.userId,
+      theme: insertPreferences.theme || 'dark',
+      compactMode: insertPreferences.compactMode ?? false,
+      animations: insertPreferences.animations ?? true,
+      fontSize: insertPreferences.fontSize || 'medium',
+      codeFont: insertPreferences.codeFont || 'jetbrains',
+      maxConcurrentRequests: insertPreferences.maxConcurrentRequests || 5,
+      cacheDuration: insertPreferences.cacheDuration || 30,
+      autoSaveConversations: insertPreferences.autoSaveConversations ?? true,
+      analyticsCollection: insertPreferences.analyticsCollection ?? false,
+      createdAt: now,
+      updatedAt: now
+    };
+    
+    const result = await this.db.insert(userPreferences).values(newPreferences).returning();
+    return result[0];
+  }
+
+  async updateUserPreferences(userId: string, updates: Partial<UserPreferences>): Promise<UserPreferences | undefined> {
+    const updated = {
+      ...updates,
+      updatedAt: Date.now()
+    };
+    
+    const result = await this.db.update(userPreferences)
+      .set(updated)
+      .where(eq(userPreferences.userId, userId))
+      .returning();
+    
+    return result[0] || undefined;
   }
 }
 
